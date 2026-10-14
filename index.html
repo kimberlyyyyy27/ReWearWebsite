@@ -277,13 +277,19 @@
   body.mobile-page-profile .site-header,
   body.mobile-page-profile .announcement,
   body.mobile-page-profile main,
-  body.mobile-page-profile #mobile-bottom-nav,\n  body.mobile-page-payment .site-header,\n  body.mobile-page-payment .announcement,\n  body.mobile-page-payment main,\n  body.mobile-page-payment #mobile-bottom-nav {display:none!important}
+  body.mobile-page-profile #mobile-bottom-nav,
+  body.mobile-page-payment .site-header,
+  body.mobile-page-payment .announcement,
+  body.mobile-page-payment main,
+  body.mobile-page-payment #mobile-bottom-nav {display:none!important}
   body.mobile-page-chat #modal,
   body.mobile-page-chatroom #modal,
-  body.mobile-page-profile #modal,\n  body.mobile-page-payment #modal {position:fixed;inset:0;z-index:10020;display:block!important;padding:0;background:#fff;backdrop-filter:none;overflow-y:auto}
+  body.mobile-page-profile #modal,
+  body.mobile-page-payment #modal {position:fixed;inset:0;z-index:10020;display:block!important;padding:0;background:#fff;backdrop-filter:none;overflow-y:auto}
   body.mobile-page-chat #modal .modal,
   body.mobile-page-chatroom #modal .modal,
-  body.mobile-page-profile #modal .modal,\n  body.mobile-page-payment #modal .modal {width:100%;max-width:none;min-height:100dvh;max-height:none;margin:0;padding:22px 18px calc(24px + env(safe-area-inset-bottom));border-radius:0;box-shadow:none;overflow:visible}
+  body.mobile-page-profile #modal .modal,
+  body.mobile-page-payment #modal .modal {width:100%;max-width:none;min-height:100dvh;max-height:none;margin:0;padding:22px 18px calc(24px + env(safe-area-inset-bottom));border-radius:0;box-shadow:none;overflow:visible}
   body.mobile-page-chat #modal .close,
   body.mobile-page-chatroom #modal .close,
   body.mobile-page-profile #modal .close {position:static;float:left;margin:0 14px 12px 0;color:#4a1420;background:transparent;font-size:0;width:34px;height:34px}
@@ -324,7 +330,10 @@
   body.mobile-page-chatroom #modal .chat-form {display:flex;gap:8px;position:static;padding:12px 0 4px;background:#fff;flex:0 0 auto}
   body.mobile-page-chatroom #modal .chat-form input {min-width:0;flex:1;border-radius:24px;padding:12px 14px}
   body.mobile-page-chatroom #modal .chat-form button {border-radius:24px;padding:0 18px}
-  body.mobile-page-payment #modal .payment-page-modal {display:block;min-height:100dvh;padding:0 18px calc(28px + env(safe-area-inset-bottom));overflow-y:auto}
+  body.mobile-page-payment #modal {overflow:hidden!important}
+  body.mobile-page-payment #modal .payment-page-modal {display:block;box-sizing:border-box;width:100%;height:100dvh;min-height:100dvh;padding:0 18px calc(28px + env(safe-area-inset-bottom));overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  body.mobile-page-payment #modal #payment-submit {position:sticky;bottom:0;z-index:3;display:block;width:100%;min-height:50px;margin:16px 0 0;padding:13px 14px calc(13px + env(safe-area-inset-bottom));border:1px solid #4a1420;border-radius:8px;background:#4a1420;box-shadow:0 -8px 18px #ffffffed;white-space:normal;line-height:1.35}
+  body.mobile-page-payment #modal .payment-form {padding-bottom:10px}
   body.mobile-page-payment #modal .payment-page-header {position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:12px;margin:0 -18px 18px;padding:12px 18px;background:#fff;border-bottom:1px solid #eee7e3}
   body.mobile-page-payment #modal .payment-page-header h2 {margin:0!important;padding:0!important;font-size:22px!important}
   body.mobile-page-payment #modal .payment-back {width:36px;height:36px;flex:0 0 36px;background:transparent;color:#4a1420;font-size:30px;line-height:1}
