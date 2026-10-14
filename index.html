@@ -65,6 +65,20 @@
       <section id="products"><div class="section-heading"><div><h2>Semua Produk</h2><p id="product-count">10 produk ditemukan</p></div><select id="sort"><option>Terbaru</option><option>Harga Terendah</option><option>Harga Tertinggi</option></select></div><div class="condition-list" id="condition-list"><button class="condition-pill active" data-condition="Semua Kondisi">Semua Kondisi</button><button class="condition-pill" data-condition="Like New">Like New</button><button class="condition-pill" data-condition="Very Good">Very Good</button><button class="condition-pill" data-condition="Good">Good</button><button class="condition-pill" data-condition="Fair">Fair</button></div><div class="product-grid" id="products-grid"></div></section>
       <section class="sell-cta"><img src="https://i.ebayimg.com/images/g/pcwAAeSw2Adqaj4R/s-l1600.jpg" alt="Fashion preloved"><div><span class="eyebrow">JUAL BAJU KAMU</span><h2>Lemari penuh? Jual di sini!</h2><p>Gratis upload dan kamu dapat hingga 70% dari harga jual.</p><button class="primary-button" id="seller-button" type="button" onclick="openAuth('seller')">Masuk sebagai Seller</button></div></section>
     </main>
+    <nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Navigasi utama">
+      <button type="button" data-bottom-action="home" class="bottom-nav-item active">
+        <span class="bottom-nav-icon" aria-hidden="true">⌂</span><span>Beranda</span>
+      </button>
+      <button type="button" data-bottom-action="flash" class="bottom-nav-item">
+        <span class="bottom-nav-icon" aria-hidden="true">％</span><span>Flash Sale</span>
+      </button>
+      <button type="button" data-bottom-action="chat" class="bottom-nav-item">
+        <span class="bottom-nav-icon" aria-hidden="true">✉</span><span>Chat</span>
+      </button>
+      <button type="button" data-bottom-action="me" class="bottom-nav-item">
+        <span class="bottom-nav-icon" aria-hidden="true">♙</span><span>Saya</span>
+      </button>
+    </nav>
     <div id="modal" class="modal-backdrop hidden"></div>
     <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap');
@@ -80,6 +94,7 @@
 .search-box button{height:100%;width:48px;color:#4a1420;background:#bee3ef}
 .header-actions{display:flex;gap:8px;margin-left:auto;align-items:center}
 .icon-button,.auth-link{position:relative;padding:8px 11px;color:#fff;background:transparent}
+.cart-button-icon{display:inline-grid;place-items:center;width:24px;height:24px;flex:0 0 24px;line-height:0}.cart-button-icon svg{display:block;width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .user-name{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#bee3ef;font-weight:700}
 .icon-button b{position:absolute;top:0;right:0;padding:1px 5px;border-radius:99px;color:#4a1420;background:#bee3ef;font-size:10px}
 .auth-link.filled{color:#4a1420;background:#fff;border-radius:6px}
@@ -143,17 +158,18 @@
 .account-tabs{display:flex;gap:6px;margin:12px 0 18px;border-bottom:1px solid #eee7e3}.account-tab{flex:1;padding:10px;color:#6a585b;background:transparent;border-bottom:2px solid transparent;font-weight:700}.account-tab.active{color:#4a1420;border-color:#4a1420}.privacy-details{display:grid;margin:0 0 14px;border:1px solid #eee7e3;border-radius:8px;overflow:hidden}.privacy-row{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;padding:12px;border-bottom:1px solid #eee7e3}.privacy-row:last-child{border-bottom:0}.privacy-row span{color:#7b7070}.privacy-row b{text-align:right;overflow-wrap:anywhere}.privacy-note{margin:0 0 14px;color:#7b7070;font-size:12px;line-height:1.5}
 .toast{z-index:9999}
 .mobile-menu-button{display:none}.mobile-menu-backdrop{position:fixed;z-index:10000;inset:0;display:flex;justify-content:flex-end;background:#20121599;backdrop-filter:blur(3px)}.mobile-menu-backdrop.hidden{display:none}.mobile-menu{width:min(340px,88vw);height:100%;padding:0 18px 24px;overflow-y:auto;background:#f5f1ec;box-shadow:-12px 0 36px #1d0b0d40;transform:translateX(100%);transition:transform .2s ease}.mobile-menu-backdrop.open .mobile-menu{transform:translateX(0)}.mobile-menu-header{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 -18px 14px;padding:16px 18px;color:#fff;background:#4a1420}.mobile-profile{display:flex;align-items:center;gap:10px;min-width:0;font-weight:700}.mobile-profile-icon{display:grid;place-items:center;flex:0 0 36px;width:36px;height:36px;border-radius:50%;color:#4a1420;background:#bee3ef}.mobile-profile-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mobile-menu-close{width:44px;height:44px;color:#fff;background:transparent;font-size:27px}.mobile-menu-links{display:grid;gap:4px}.mobile-menu-links button{display:flex;align-items:center;gap:12px;width:100%;min-height:48px;padding:10px 12px;border-radius:7px;color:#4a1420;background:transparent;text-align:left;font-size:14px;font-weight:700}.mobile-menu-links button:hover,.mobile-menu-links button:focus-visible{background:#eae2dc;outline:2px solid #bee3ef}.mobile-menu-links button span[aria-hidden]{width:24px;color:#6b2835;text-align:center;font-size:17px}.mobile-menu-divider{height:1px;margin:8px 0;background:#dfd4ce}body.mobile-menu-open{overflow:hidden}
+.mobile-bottom-nav{display:none}
 .seller-center-modal{width:min(1100px,100%);padding:0;overflow:auto}.seller-center{min-height:620px;background:#f5f1ec}.seller-topbar{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:18px 24px;color:#fff;background:#4a1420}.seller-brand strong{font-size:18px}.seller-brand small{display:block;color:#d9c4c7;font-size:10px}.seller-top-actions{display:flex;align-items:center;gap:8px}.seller-top-actions button{padding:8px 12px;border-radius:6px;color:#fff;background:#642532;font-size:11px}.seller-top-actions .seller-close{background:transparent;font-size:20px}.seller-layout{display:grid;grid-template-columns:190px minmax(0,1fr);min-height:560px}.seller-sidebar{padding:18px 10px;background:#fff;border-right:1px solid #e8dfd9}.seller-nav{display:flex;flex-direction:column;gap:5px}.seller-nav button{width:100%;padding:11px 12px;border-radius:7px;color:#604f52;background:transparent;text-align:left;font-size:12px;font-weight:700}.seller-nav button:hover,.seller-nav button.active{color:#fff;background:#4a1420}.seller-main{min-width:0;padding:24px;overflow:auto}.seller-page-title{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:20px}.seller-page-title h2{margin:0 0 4px}.seller-page-title p{margin:0;color:#7b7070;font-size:12px}.seller-primary{min-height:38px;padding:0 15px;border-radius:7px;color:#fff;background:#4a1420;font-size:12px;font-weight:800}.seller-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:20px}.seller-stat,.seller-section{padding:17px;border-radius:9px;background:#fff;box-shadow:0 2px 0 #e8dfd9}.seller-stat span,.seller-stat small{display:block;color:#7b7070;font-size:10px}.seller-stat strong{display:block;margin-top:7px;color:#4a1420;font-size:21px;overflow-wrap:anywhere}.seller-stat small{margin-top:4px}.seller-section{margin-top:16px}.seller-section h3{margin:0 0 14px;font-size:14px}.seller-table{width:100%;border-collapse:collapse;font-size:11px}.seller-table th{padding:10px 8px;color:#7b7070;background:#f8f5f2;text-align:left;font-size:10px}.seller-table td{padding:10px 8px;border-bottom:1px solid #eee7e3;vertical-align:middle}.seller-product-mini{display:flex;align-items:center;gap:9px}.seller-product-mini img{width:42px;height:50px;object-fit:cover;border-radius:5px;background:#eee}.seller-product-mini b,.seller-product-mini small{display:block}.seller-product-mini small{color:#7b7070}.seller-status{display:inline-block;padding:4px 7px;border-radius:99px;font-size:9px;font-weight:800}.seller-status.active,.seller-status.completed{color:#356641;background:#dff1e2}.seller-status.pending{color:#805d18;background:#fff0c9}.seller-status.sold{color:#4a1420;background:#ead7dc}.seller-status.shipped{color:#245b72;background:#d9eff7}.seller-actions,.seller-order-controls{display:flex;align-items:center;gap:6px}.seller-small-btn,.seller-order-controls button,.seller-message button{padding:7px 9px;border:1px solid #e1d9d5;border-radius:5px;color:#4a1420;background:#fff;font-size:10px;font-weight:700}.seller-small-btn:hover{color:#fff;background:#4a1420}.seller-empty{padding:30px 15px;color:#8b7d7f;text-align:center;font-size:12px}.seller-message{display:grid;gap:6px;padding:13px 0;border-bottom:1px solid #eee7e3}.seller-message:last-child{border-bottom:0}.seller-message-head,.seller-order-head{display:flex;justify-content:space-between;gap:10px}.seller-message-head b,.seller-order-head b{color:#32151b;font-size:12px}.seller-message-head small{color:#9a8c8e;font-size:9px}.seller-message p{margin:0;color:#66585a;font-size:11px;line-height:1.5}.seller-reply{color:#356641!important}.seller-form{display:grid;gap:12px}.seller-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.seller-form label{display:grid;gap:5px;color:#5e4d50;font-size:11px;font-weight:700}.seller-form input,.seller-form select,.seller-form textarea,.seller-order-controls select{width:100%;padding:10px;border:1px solid #e1d9d5;border-radius:7px;background:#fff;font-size:12px}.seller-form textarea{resize:vertical}.seller-review{padding:14px 0;border-bottom:1px solid #eee7e3}.seller-review:last-child{border-bottom:0}.seller-stars{color:#d58a24}.seller-review p{margin:7px 0 3px;color:#5e5052;font-size:11px}.seller-review small{color:#9a8c8e;font-size:9px}.seller-order-card{padding:15px;border:1px solid #eee7e3;border-radius:9px;background:#fff}.seller-order-card+.seller-order-card{margin-top:10px}.seller-order-head{margin-bottom:10px}.seller-order-head span{color:#4a1420;font-size:12px;font-weight:800}.seller-order-info{display:grid;grid-template-columns:1fr 1fr;gap:6px 15px;color:#6f6163;font-size:10px}.seller-order-controls{margin-top:12px}.seller-order-controls select{width:auto;padding:7px;font-size:10px}.seller-order-controls button,.seller-message button{color:#fff;background:#4a1420}.seller-note{padding:11px;border-radius:7px;color:#5d4d50;background:#f5f1ec;font-size:10px;line-height:1.5}
 @media(max-width:800px){.seller-layout{grid-template-columns:minmax(0,1fr)}.seller-sidebar{border-right:0;border-bottom:1px solid #e8dfd9}.seller-nav{flex-direction:row;overflow:auto}.seller-nav button{min-width:max-content}.seller-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.seller-form-grid{grid-template-columns:1fr}}
 @media(max-width:550px){.seller-topbar{flex-direction:column;align-items:stretch;padding:14px}.seller-top-actions{flex-wrap:wrap;width:100%}.seller-top-actions span{flex:1 0 100%;overflow-wrap:anywhere}.seller-top-actions button{min-height:40px}.seller-main{padding:15px}.seller-page-title{flex-direction:column}.seller-section{overflow:auto}.seller-table{min-width:650px}}
 .seller-stats{grid-template-columns:repeat(auto-fit,minmax(135px,1fr))}.seller-order-controls{flex-wrap:wrap}.seller-order-controls input{width:min(135px,100%);padding:7px;border:1px solid #e1d9d5;border-radius:5px;font-size:10px}.seller-reply{color:#356641;font-weight:700}
 @media(max-width:680px){
-  .header-main{display:grid;grid-template-columns:minmax(0,1fr) 44px 44px;gap:8px;padding:12px 0;min-height:0}
+  .header-main{display:grid;grid-template-columns:minmax(0,1fr) 36px 44px;gap:8px;padding:12px 0;min-height:0}
   .logo{justify-self:start}
   .mobile-menu-button{grid-column:3;grid-row:1;display:grid;place-items:center;width:44px;height:44px;border:1px solid #78434d;border-radius:7px;color:#fff;background:#642532;font-size:22px}
   .mobile-menu-button:focus-visible,.mobile-menu-close:focus-visible{outline:3px solid #bee3ef;outline-offset:2px}
   .header-actions{display:contents}
-  #cart-button{grid-column:2;grid-row:1;display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:1px solid #78434d;border-radius:7px;color:#fff;background:#642532}
+  #cart-button{grid-column:3;grid-row:1;display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:1px solid #78434d;border-radius:7px;color:#fff;background:#642532;justify-self:end}
   #cart-button .cart-button-label{display:none}
   #chat-button,#login-button,#register-button{display:none}
   .search-box{grid-column:1/-1;grid-row:2;order:initial;width:100%;max-width:none;min-width:0}
@@ -163,8 +179,8 @@
   .panel{padding:15px}
   .section-heading{align-items:flex-start;gap:12px;flex-wrap:wrap}
   .section-heading select{max-width:100%;min-height:42px}
-  .trust-bar{flex-wrap:wrap;gap:8px}
-  .trust-bar b{flex:1 1 40%;min-width:0;padding:5px;font-size:12px}
+  .trust-bar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;align-items:center}
+  .trust-bar b{min-width:0;padding:5px;font-size:12px;overflow-wrap:anywhere}
   .flash-grid,.product-grid,.store-product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .product-image{height:auto;aspect-ratio:4/5}
   .product-info h3{overflow-wrap:anywhere}
@@ -199,6 +215,16 @@
   .seller-table td:first-child{display:block}
   .seller-table td:first-child::before{content:none}
   .seller-actions{flex-wrap:wrap}
+  body{padding-bottom:calc(68px + env(safe-area-inset-bottom))}
+  .mobile-bottom-nav{position:fixed;z-index:9998;right:0;bottom:0;left:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;padding:7px 4px calc(7px + env(safe-area-inset-bottom));border-top:1px solid #e9e2de;background:#fff;box-shadow:0 -3px 14px #251a1b0d}
+  .bottom-nav-item{display:flex;min-width:0;min-height:48px;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:2px;color:#827679;background:transparent;font-size:10px;white-space:nowrap}
+  .bottom-nav-icon{display:grid;place-items:center;height:25px;font-size:24px;line-height:1}
+  .bottom-nav-item.active{color:#4a1420;font-weight:800}
+  .bottom-nav-item.active .bottom-nav-icon{color:#4a1420}
+  .mobile-bottom-nav.is-seller{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .bottom-nav-item.add-product .bottom-nav-icon{display:grid;place-items:center;width:38px;height:34px;margin-top:-13px;border-radius:10px;color:#fff;background:#4a1420;font-size:27px;box-shadow:0 3px 8px #4a142033}
+  .bottom-nav-item.add-product{font-weight:700;color:#4a1420}
+  .bottom-nav-item:focus-visible{outline:2px solid #bee3ef;outline-offset:-2px;border-radius:6px}
 }
 @media(max-width:360px){
   .container{width:calc(100% - 24px)}
@@ -211,6 +237,102 @@
   .auth-tabs button{flex:1 1 100%}
 }
 
+
+
+/* Mobile-only page navigation: desktop layout stays unchanged */
+@media(max-width:680px){
+  body.mobile-page-home .category-bar,
+  body.mobile-page-home .hero,
+  body.mobile-page-home .sell-cta,
+  body.mobile-page-home #products {display:block}
+  body.mobile-page-home .trust-bar {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;align-items:center}
+  body.mobile-page-home .flash-panel {display:none}
+  body.mobile-page-flash .category-bar,
+  body.mobile-page-flash .hero,
+  body.mobile-page-flash .trust-bar,
+  body.mobile-page-flash #products,
+  body.mobile-page-flash .sell-cta {display:none}
+  body.mobile-page-flash .flash-panel {display:block;margin-top:14px}
+  body.mobile-page-flash .flash-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+  body.mobile-page-products .category-bar,
+  body.mobile-page-products #products {display:block}
+  body.mobile-page-products .hero,
+  body.mobile-page-products .flash-panel,
+  body.mobile-page-products .trust-bar,
+  body.mobile-page-products .sell-cta {display:none}
+  body.mobile-page-products #products {padding-bottom:14px}
+  body.mobile-page-products .category-bar {margin-bottom:14px}
+  body.mobile-page-products .page-content {padding-top:14px}
+  body.mobile-page-products #products .section-heading {margin-top:0}
+  .mobile-menu-button{display:grid!important}
+  /* Chat and profile behave like full mobile pages, not pop-up dialogs */
+  body.mobile-page-chat .site-header,
+  body.mobile-page-chat .announcement,
+  body.mobile-page-chat main,
+  body.mobile-page-chat #mobile-bottom-nav,
+  body.mobile-page-chatroom .site-header,
+  body.mobile-page-chatroom .announcement,
+  body.mobile-page-chatroom main,
+  body.mobile-page-chatroom #mobile-bottom-nav,
+  body.mobile-page-profile .site-header,
+  body.mobile-page-profile .announcement,
+  body.mobile-page-profile main,
+  body.mobile-page-profile #mobile-bottom-nav {display:none!important}
+  body.mobile-page-chat #modal,
+  body.mobile-page-chatroom #modal,
+  body.mobile-page-profile #modal {position:fixed;inset:0;z-index:10020;display:block!important;padding:0;background:#fff;backdrop-filter:none;overflow-y:auto}
+  body.mobile-page-chat #modal .modal,
+  body.mobile-page-chatroom #modal .modal,
+  body.mobile-page-profile #modal .modal {width:100%;max-width:none;min-height:100dvh;max-height:none;margin:0;padding:22px 18px calc(24px + env(safe-area-inset-bottom));border-radius:0;box-shadow:none;overflow:visible}
+  body.mobile-page-chat #modal .close,
+  body.mobile-page-chatroom #modal .close,
+  body.mobile-page-profile #modal .close {position:static;float:left;margin:0 14px 12px 0;color:#4a1420;background:transparent;font-size:0;width:34px;height:34px}
+  body.mobile-page-chat #modal .close:before,
+  body.mobile-page-chatroom #modal .close:before,
+  body.mobile-page-profile #modal .close:before {content:"←";font-size:30px;line-height:1}
+  body.mobile-page-chat #modal h2,
+  body.mobile-page-profile #modal h2 {padding-top:3px;margin:0 0 24px;font-size:25px}
+  body.mobile-page-chat .chat-layout {clear:both;display:grid;grid-template-columns:1fr;min-height:calc(100dvh - 110px);grid-template-rows:auto 1fr}
+  body.mobile-page-chat .chat-layout aside {display:flex;gap:8px;max-height:none;padding:8px 0;overflow-x:auto;border:0;border-bottom:1px solid #eee7e3}
+  body.mobile-page-chat .chat-room {flex:0 0 auto;width:auto;white-space:nowrap;background:#f5f1ec}
+  body.mobile-page-chat .chat-layout section {min-height:calc(100dvh - 190px);grid-template-rows:auto 1fr auto}
+  body.mobile-page-chat .messages {min-height:240px;max-height:none}
+  body.mobile-page-chat .chat-form {position:sticky;bottom:0;background:#fff;padding:12px 0}
+  body.mobile-page-chat .chat-modal {padding:20px 0 0!important}
+  body.mobile-page-chat .chat-modal h2 {padding:0 18px 16px!important;margin:0!important;border-bottom:1px solid #eee7e3}
+  body.mobile-page-chat .chat-inbox-list {display:flex;flex-direction:column}
+  body.mobile-page-chat .chat-inbox-item {display:flex;align-items:center;gap:13px;text-align:left;padding:15px 18px;border:0;border-bottom:1px solid #f0ece9;background:#fff;color:#241e1f;width:100%}
+  body.mobile-page-chat .chat-avatar {width:48px;height:48px;border-radius:50%;display:grid;place-items:center;flex:0 0 48px;background:#f3e5e3;color:#4a1420;font-weight:800;font-size:18px}
+  body.mobile-page-chat .chat-inbox-copy {min-width:0;flex:1}
+  body.mobile-page-chat .chat-inbox-head {display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:5px}
+  body.mobile-page-chat .chat-inbox-head strong {font-size:15px}
+  body.mobile-page-chat .chat-inbox-head time {font-size:11px;color:#8b8081;white-space:nowrap}
+  body.mobile-page-chat .chat-inbox-preview {display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#827779;font-size:13px}
+  body.mobile-page-chatroom #modal .chat-modal {padding:0 0 calc(10px + env(safe-area-inset-bottom))!important;display:flex;flex-direction:column;height:100dvh;min-height:100dvh;overflow:hidden}
+  body.mobile-page-chatroom #modal .chat-room-header {display:flex;align-items:center;gap:12px;padding:8px 18px 15px;border-bottom:1px solid #eee7e3;flex:0 0 auto}
+  body.mobile-page-chatroom #modal .chat-room-header .chat-back {border:0;background:transparent;color:#4a1420;font-size:29px;padding:0 5px 0 0}
+  body.mobile-page-chatroom #modal .chat-room-header h2 {padding:0!important;margin:0!important;font-size:20px!important;flex:1}
+  body.mobile-page-chatroom #modal .chat-room-header .chat-avatar {width:40px;height:40px;flex-basis:40px}
+  body.mobile-page-chatroom #modal .chat-layout {display:flex;flex:1;min-height:0;flex-direction:column;padding:0 14px}
+  body.mobile-page-chatroom #modal .chat-layout aside {display:none}
+  body.mobile-page-chatroom #modal .chat-layout section {display:flex;flex:1;min-height:0;flex-direction:column;grid-template-rows:none;border:0}
+  body.mobile-page-chatroom #modal .chat-layout section h3 {display:none}
+  body.mobile-page-chatroom #modal .messages {display:flex;flex:1;min-height:0;max-height:none;overflow-y:auto;flex-direction:column;gap:10px;padding:18px 0;background:#f7f7f7}
+  body.mobile-page-chatroom #modal .message {max-width:82%;padding:11px 13px;border-radius:16px;font-size:14px;line-height:1.45;overflow-wrap:anywhere}
+  body.mobile-page-chatroom #modal .message.other {align-self:flex-start;background:#fff;border:1px solid #eee}
+  body.mobile-page-chatroom #modal .message.user {align-self:flex-end;background:#f5e6e3;color:#332426}
+  body.mobile-page-chatroom #modal .chat-form {display:flex;gap:8px;position:static;padding:12px 0 4px;background:#fff;flex:0 0 auto}
+  body.mobile-page-chatroom #modal .chat-form input {min-width:0;flex:1;border-radius:24px;padding:12px 14px}
+  body.mobile-page-chatroom #modal .chat-form button {border-radius:24px;padding:0 18px}
+  body.mobile-page-profile .payment-summary {margin:18px 0}
+  body.mobile-page-profile .modal-body {padding-bottom:10px}
+}
+
+.account-edit-form{display:grid;gap:12px;margin:16px 0}
+.account-edit-form label{display:grid;gap:6px;color:#5e4d50;font-size:12px;font-weight:700}
+.account-edit-form input{width:100%;padding:12px;border:1px solid #e1d9d5;border-radius:7px;background:#fff}
+.account-edit-actions{display:flex;gap:8px}
+.account-edit-actions button{flex:1}
 
 </style>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -306,7 +428,7 @@ const save = (key, value) => localStorage.setItem(key, JSON.stringify(value));
 const getProfileName = (user) => String(user?.displayName || user?.username || user?.name || user?.email?.split('@')[0] || 'REWEAR Member').trim();
 const loadCurrentUser = () => { const user = load('rewear-user', null); if (user?.role === 'admin') { if (user.authProvider === 'local') { localStorage.removeItem('rewear-user'); return null; } user.role = 'buyer'; } if (user && user.name !== getProfileName(user)) user.name = getProfileName(user); if (user) save('rewear-user', user); return user; };
 const $ = (selector) => document.querySelector(selector);
-const state = { user: loadCurrentUser(), cart: [], orders: [], favorites: [], chat: [], modal: null, selectedProduct: null, selectedStore: null, activeRoom: 'helper', authMode: 'login', authIntent: 'buyer', sellerPage: 'dashboard', editingSellerProduct: null, mobileMenuOpen: false, mobileMenuReturnFocus: null, category: 'Semua', condition: 'Semua Kondisi', search: '', sort: 'Terbaru' };
+const state = { user: loadCurrentUser(), cart: [], orders: [], favorites: [], chat: [], modal: null, selectedProduct: null, selectedStore: null, activeRoom: 'helper', mobileChatView: 'inbox', authMode: 'login', authIntent: 'buyer', sellerPage: 'dashboard', editingSellerProduct: null, accountEditing: false, mobileMenuOpen: false, mobileMenuReturnFocus: null, category: 'Semua', condition: 'Semua Kondisi', search: '', sort: 'Terbaru' };
 const accountKey = () => state.user ? state.user.email.toLowerCase() : 'guest';
 const hydrateAccount = () => { const key = accountKey(); state.cart = load(`rewear-cart-${key}`, []); state.orders = load(`rewear-orders-${key}`, []); state.favorites = load(`rewear-favorites-${key}`, []); state.chat = load(`rewear-chat-${key}`, [{ room: 'helper', name: 'Rewear Helper', messages: [{ sender: 'other', text: 'Halo! Ada yang bisa kami bantu?' }] }, { room: 'store', name: storeName, messages: [{ sender: 'other', text: `Halo! Selamat datang di ${storeName}. Ada yang ingin ditanyakan?` }] }]); };
 const formatPrice = (value) => `Rp${value.toLocaleString('id-ID')}`;
@@ -337,7 +459,7 @@ const renderMobileMenu = () => {
   if (!name || !links) return;
   name.textContent = state.user ? getProfileName(state.user) : 'Welcome to REWEAR';
   links.replaceChildren();
-  const actions = state.user ? [{ action: 'profile', icon: '●', label: 'My Account / Profile' }, { action: 'browse', icon: '⌂', label: 'Home / Browse Products' }, { action: 'search', icon: '⌕', label: 'Search' }, { action: 'categories', icon: '▦', label: 'Categories' }] : [{ action: 'browse', icon: '⌂', label: 'Home / Browse Products' }, { action: 'search', icon: '⌕', label: 'Search' }, { action: 'categories', icon: '▦', label: 'Categories' }];
+  const actions = state.user ? [{ action: 'profile', icon: '●', label: 'My Account / Profile' }, { action: 'browse', icon: '⌂', label: 'Home / Browse Products' }, { action: 'search', icon: '⌕', label: 'Search' }, { action: 'categories', icon: '▦', label: 'Categories' }, { action: 'flash', icon: '％', label: 'Flash Sale' }] : [{ action: 'browse', icon: '⌂', label: 'Home / Browse Products' }, { action: 'search', icon: '⌕', label: 'Search' }, { action: 'categories', icon: '▦', label: 'Categories' }, { action: 'flash', icon: '％', label: 'Flash Sale' }];
   if (state.user) {
     actions.push({ action: 'orders', icon: '▤', label: 'My Orders' });
     if (state.user.role === 'seller') actions.push({ action: 'seller', icon: '◇', label: 'Seller Center' });
@@ -396,9 +518,10 @@ const bindMobileMenu = () => {
     if (!button) return;
     const action = button.dataset.mobileAction;
     closeMobileMenu(false);
-    if (action === 'browse') { window.scrollTo({ top: 0, behavior: 'smooth' }); document.querySelector('#products').scrollIntoView({ behavior: 'smooth' }); }
+    if (action === 'browse') setMobilePage('products');
+    if (action === 'flash') setMobilePage('flash');
     if (action === 'search') { $('#search').scrollIntoView({ behavior: 'smooth', block: 'center' }); $('#search').focus(); }
-    if (action === 'categories') document.querySelector('#category-list').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (action === 'categories') { setMobilePage('products'); document.querySelector('#category-list').scrollIntoView({ behavior: 'auto', block: 'start' }); }
     if (action === 'profile') openAccount();
     if (action === 'orders') { state.modal = 'orders'; renderModal(); }
     if (action === 'cart') { state.modal = 'cart'; renderModal(); }
@@ -418,7 +541,34 @@ const bindMobileMenu = () => {
     else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
   });
 };
-const showToast = (message) => { document.querySelector('.toast')?.remove(); const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); window.setTimeout(() => toast.remove(), 2400); };
+let toastTimer = null;
+let activeToastContext = null;
+const toastContextForCurrentView = () => {
+  const page = [...document.body.classList].find((name) => name.startsWith('mobile-page-')) || 'desktop';
+  const detail = state.modal === 'seller-center' ? state.sellerPage : state.modal === 'chat' ? state.mobileChatView : '';
+  return `${page}:${state.modal || ''}:${detail}`;
+};
+const clearToast = () => {
+  if (toastTimer !== null) window.clearTimeout(toastTimer);
+  toastTimer = null;
+  activeToastContext = null;
+  document.querySelectorAll('.toast').forEach((toast) => toast.remove());
+};
+const showToast = (message) => {
+  const context = toastContextForCurrentView();
+  clearToast();
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  activeToastContext = context;
+  toastTimer = window.setTimeout(() => {
+    if (activeToastContext !== context) return;
+    toast.remove();
+    activeToastContext = null;
+    toastTimer = null;
+  }, 2400);
+};
 const addToCart = (product) => requireLogin(() => { if (state.cart.some((entry) => entry.product.id === product.id)) { showToast('Item ini sudah ada di keranjang'); return; } state.cart.push({ product, quantity: 1 }); save(`rewear-cart-${accountKey()}`, state.cart); state.modal = null; render(); showToast(`${product.name} masuk ke keranjang`); });
 const updateCart = () => save(`rewear-cart-${accountKey()}`, state.cart);
 const removeFromCart = (productId) => { state.cart = state.cart.filter((entry) => entry.product.id !== productId); updateCart(); renderModal(); };
@@ -428,14 +578,54 @@ const completePayment = (form) => { const data = new FormData(form); const items
 const openProduct = (product) => { state.selectedProduct = product; state.modal = 'product'; renderModal(); };
 const openStore = (name) => { state.selectedStore = name; state.modal = 'store'; renderModal(); };
 function openAuth(mode) { state.authMode = mode; state.authIntent = mode === 'seller' || mode === 'seller-register' ? 'seller' : 'buyer'; state.modal = 'auth'; renderModal(); }
-const openAccount = () => { state.accountTab = 'details'; state.modal = 'account'; renderModal(); };
+const openAccount = () => { state.accountTab = 'details'; state.accountEditing = false; state.modal = 'account'; renderModal(); };
 const sendPasswordReset = async () => { if (!firebaseAuth || !state.user?.email) { showToast('Password reset is unavailable for this account.'); return; } try { await firebaseAuth.sendPasswordResetEmail(state.user.email); showToast('Password reset email sent.'); } catch (error) { console.error('Password reset failed:', error); showToast(firebaseAuthErrorMessage(error)); } };
+const saveAccountInformation = async (form) => {
+  const username = String(new FormData(form).get('username') || '').trim();
+  if (!username || username.length > 50) {
+    showToast('Username must be between 1 and 50 characters.');
+    return;
+  }
+
+  const firebaseUser = firebaseAuth?.currentUser;
+  if (!firebaseUser) {
+    showToast('Sign in to your Firebase account before updating your username.');
+    return;
+  }
+
+  try {
+    await firebaseUser.updateProfile({ displayName: username });
+    state.user = { ...state.user, displayName: username, name: username };
+    save('rewear-user', state.user);
+    state.accountEditing = false;
+    render();
+    renderModal();
+    showToast('Username updated successfully.');
+  } catch (error) {
+    console.error('Could not update Firebase display name:', error);
+    showToast(firebaseAuthErrorMessage(error));
+  }
+};
 const logout = async () => { let signOutFailed = false; try { if (firebaseAuth) await firebaseAuth.signOut(); } catch (error) { signOutFailed = true; console.error('Firebase sign-out failed:', error); } state.user = null; localStorage.removeItem('rewear-user'); state.modal = null; state.selectedOrder = null; state.accountTab = 'details'; hydrateAccount(); render(); renderModal(); showToast(signOutFailed ? 'Local logout completed, but Firebase sign-out failed.' : 'Kamu sudah keluar'); };
 const card = (product) => { const id = String(product.id); const favorite = state.favorites.some((item) => String(item) === id); return `<article class="product-card"><button class="product-image" data-product="${sellerEscape(id)}"><img src="${sellerEscape(product.image)}" alt="${sellerEscape(product.name)}"><span class="ribbon ${product.ribbon === 'Hot Offer' ? 'orange' : product.ribbon === 'Murah' ? 'sky' : ''}">${sellerEscape(product.ribbon || 'Baru')}</span><span class="discount">-${discount(product)}%</span></button><button class="heart ${favorite ? 'active' : ''}" data-favorite="${sellerEscape(id)}">${favorite ? '&#9829;' : '&#9825;'}</button><div class="product-info"><strong class="brand">${sellerEscape(product.brand)}</strong><h3>${sellerEscape(product.name)}</h3><button class="store-link" data-store="${sellerEscape(product.sellerName || storeName)}">Dijual oleh ${sellerEscape(product.sellerName || storeName)}</button><div class="price-row"><b>${formatPrice(product.price)}</b><del>${formatPrice(product.originalPrice)}</del></div><div class="meta">${sellerEscape(product.size)} <span>-</span> ${sellerEscape(product.condition)}</div><small>${sellerEscape(product.location)} 🏠︎ ${Number(product.viewed) || 0} Dilihat</small></div><button class="quick-add" data-add="${sellerEscape(id)}">+ Keranjang</button></article>`; };
-function render() { hydrateAccount(); updateAuthHeader(); renderMobileMenu(); syncFilterButtons(); products = [...baseProducts, ...sellerMarketplaceProducts()]; const list = filtered(); $('#product-count').textContent = `${list.length} produk ditemukan`; $('#products-grid').innerHTML = list.map(card).join(''); $('#flash-grid').innerHTML = products.slice(0, 4).map(card).join(''); bindCards(); }
+const setMobilePage = (page, options = {}) => {
+  const allowed = ['home', 'flash', 'products', 'chat', 'chatroom', 'profile'];
+  if (!allowed.includes(page)) page = 'home';
+  const currentPage = allowed.find((name) => document.body.classList.contains(`mobile-page-${name}`)) || 'home';
+  if (currentPage !== page) clearToast();
+  document.body.classList.remove(...allowed.map((name) => `mobile-page-${name}`));
+  document.body.classList.add(`mobile-page-${page}`);
+  const nav = $('#mobile-bottom-nav');
+  if (nav) nav.querySelectorAll('[data-bottom-action]').forEach((item) => {
+    const action = item.dataset.bottomAction;
+    item.classList.toggle('active', (page === 'home' && action === 'home') || (page === 'flash' && action === 'flash') || ((page === 'chat' || page === 'chatroom') && action === 'chat') || (page === 'profile' && action === 'me'));
+  });
+  if (options.scroll !== false) window.scrollTo({ top: 0, behavior: 'auto' });
+};
+function render() { hydrateAccount(); updateAuthHeader(); renderMobileMenu(); renderBottomNavigation(); syncFilterButtons(); products = [...baseProducts, ...sellerMarketplaceProducts()]; const list = filtered(); $('#product-count').textContent = `${list.length} produk ditemukan`; $('#products-grid').innerHTML = list.map(card).join(''); $('#flash-grid').innerHTML = products.slice(0, 4).map(card).join(''); bindCards(); }
 function bindCards() { document.querySelectorAll('[data-product]').forEach((button) => button.onclick = () => openProduct(products.find((product) => String(product.id) === button.dataset.product))); document.querySelectorAll('[data-add]').forEach((button) => button.onclick = () => addToCart(products.find((product) => String(product.id) === button.dataset.add))); document.querySelectorAll('[data-store]').forEach((button) => button.onclick = (event) => { event.stopPropagation(); openStore(button.dataset.store); }); document.querySelectorAll('[data-favorite]').forEach((button) => button.onclick = () => requireLogin(() => { const id = button.dataset.favorite; state.favorites = state.favorites.includes(id) ? state.favorites.filter((item) => String(item) !== id) : [...state.favorites, id]; save(`rewear-favorites-${accountKey()}`, state.favorites); render(); })); }
-function renderModal() { const modal = $('#modal'); if (!state.modal) { modal.innerHTML = ''; modal.className = 'modal-backdrop hidden'; return; } modal.className = 'modal-backdrop'; if (state.modal === 'auth') modal.innerHTML = authModal(); if (state.modal === 'product') modal.innerHTML = productModal(); if (state.modal === 'store') modal.innerHTML = storeModal(); if (state.modal === 'cart') modal.innerHTML = cartModal(); if (state.modal === 'payment') modal.innerHTML = paymentModal(); if (state.modal === 'order-detail') modal.innerHTML = orderDetailModal(); if (state.modal === 'orders') modal.innerHTML = ordersModal(); if (state.modal === 'account') modal.innerHTML = accountModal(); if (state.modal === 'chat') modal.innerHTML = chatModal(); if (state.modal === 'seller-center') modal.innerHTML = sellerCenter(); bindModal(); bindAccountControls(); bindPaymentControls(); bindSellerControls(); }
-const closeModal = () => { state.modal = null; renderModal(); };
+function renderModal() { const modal = $('#modal'); const context = toastContextForCurrentView(); if (activeToastContext && activeToastContext !== context) clearToast(); if (!state.modal) { modal.innerHTML = ''; modal.className = 'modal-backdrop hidden'; return; } modal.className = 'modal-backdrop'; if (state.modal === 'auth') modal.innerHTML = authModal(); if (state.modal === 'product') modal.innerHTML = productModal(); if (state.modal === 'store') modal.innerHTML = storeModal(); if (state.modal === 'cart') modal.innerHTML = cartModal(); if (state.modal === 'payment') modal.innerHTML = paymentModal(); if (state.modal === 'order-detail') modal.innerHTML = orderDetailModal(); if (state.modal === 'orders') modal.innerHTML = ordersModal(); if (state.modal === 'account') modal.innerHTML = accountModal(); if (state.modal === 'chat') modal.innerHTML = chatModal(); if (state.modal === 'seller-center') modal.innerHTML = sellerCenter(); bindModal(); bindAccountControls(); bindPaymentControls(); bindSellerControls(); }
+const closeModal = () => { const wasMobilePage = window.matchMedia('(max-width: 680px)').matches && ['chat','account'].includes(state.modal); state.modal = null; renderModal(); if (wasMobilePage) setMobilePage('home'); };
 const authModal = () => { const sellerMode = state.authMode === 'seller';
 const sellerRegister = state.authMode === 'seller-register';
 const loginMode = state.authMode === 'login'; return `<div class="modal auth-modal"><button class="close" data-close>X</button><div class="auth-head"><b>RE<span class="circle-logo"></span>WEAR</b><div class="auth-tabs">
@@ -449,10 +639,58 @@ const cartModal = () => `<div class="modal narrow"><button class="close" data-cl
 const paymentModal = () => { const subtotal = state.cart.reduce((sum, item) => sum + item.product.price, 0); const shippingCost = shippingRates.regular; const total = subtotal + shippingCost; return `<div class="modal payment-modal"><button class="close" data-close>X</button><h2>Checkout & Pembayaran</h2><div class="payment-summary"><div><span>Subtotal</span><b id="payment-subtotal">${formatPrice(subtotal)}</b></div><div><span>Ongkir</span><b id="shipping-cost">${formatPrice(shippingCost)}</b></div><div><span>Total</span><b id="payment-total">${formatPrice(total)}</b></div></div><form class="payment-form" id="payment-form"><label>Nama penerima<input name="recipient" placeholder="Nama lengkap" required></label><label>Alamat pengiriman<textarea name="address" rows="3" placeholder="Alamat lengkap" required></textarea></label><label>Pilih layanan pengiriman<select name="shipping-method" id="shipping-method"><option value="regular">Regular Service (REG) - ${formatPrice(shippingRates.regular)} / 1-3 hari</option><option value="express">Express / Next Day (YES/Super) - ${formatPrice(shippingRates.express)}</option><option value="cargo">Cargo / Heavy Packages (JTR/Pos Kargo) - mulai ${formatPrice(shippingRates.cargo)}</option></select></label><label>Metode pembayaran<select name="payment-method"><option value="Kartu debit/kredit">Kartu debit/kredit</option><option value="Transfer bank">Transfer bank</option><option value="COD">Bayar di tempat (COD)</option></select></label><div class="payment-row"><label>Nomor kartu<input name="card-number" inputmode="numeric" placeholder="1234 5678 9012 3456"></label><label>Berlaku sampai<input name="expiry" placeholder="MM/YY"></label></div><button class="primary-button full" type="submit" id="payment-submit">Bayar ${formatPrice(total)}</button></form></div>`; };
 function bindPaymentControls() { const shippingSelect = $('#shipping-method'); if (!shippingSelect) return; shippingSelect.onchange = () => { const subtotal = state.cart.reduce((sum, item) => sum + item.product.price, 0); const shippingCost = shippingRates[shippingSelect.value] || shippingRates.regular; const total = subtotal + shippingCost; $('#shipping-cost').textContent = formatPrice(shippingCost); $('#payment-total').textContent = formatPrice(total); $('#payment-submit').textContent = `Bayar ${formatPrice(total)}`; }; }
 const orderDetailModal = () => { const order = state.selectedOrder; if (!order) return '<div class="modal narrow"><button class="close" data-close>X</button><p>Order details are unavailable.</p></div>'; return `<div class="modal narrow"><button class="close" data-close>X</button><span class="eyebrow">PESANAN</span><h2>Detail Pesanan</h2><p><b>${sellerEscape(order.id)}</b></p><div class="modal-body">${order.items.map((item) => `<div class="order-item"><span><b>${sellerEscape(item.product.name)}</b><small>${Number(item.quantity) || 1} × ${sellerEscape(item.product.brand)}</small></span><strong>${formatPrice(item.product.price * (Number(item.quantity) || 1))}</strong></div>`).join('')}<div class="payment-summary"><div><span>Status</span><b>${sellerEscape(order.status || 'New')}</b></div><div><span>Subtotal</span><b>${formatPrice(order.subtotal || order.total)}</b></div><div><span>Pengiriman</span><span>${sellerEscape(order.shippingMethod || 'Regular Service (REG)')}</span></div><div><span>Ongkir</span><span>${formatPrice(order.shippingCost || 0)}</span></div><div><span>Total</span><b>${formatPrice(order.total)}</b></div><div><span>Pembayaran</span><span>${sellerEscape(order.paymentMethod)}</span></div><div><span>Penerima</span><span>${sellerEscape(order.recipient)}</span></div><div><span>Alamat</span><span>${sellerEscape(order.address)}</span></div>${Object.entries(order.shipments || {}).map(([sellerId, shipment]) => `<div><span>Kurir (${sellerEscape(sellerId)})</span><span>${sellerEscape(shipment.courierName || '-')} · ${sellerEscape(shipment.trackingNumber || '-')} · ${sellerEscape(shipment.status || '-')}</span></div>`).join('')}</div>${sellerReviewSection(order)}<button class="primary-button full" data-close>Lanjut Belanja</button></div></div>`; };
-const accountModal = () => { const privacyTab = state.accountTab === 'privacy'; const hasPasswordLogin = state.user.authProvider !== 'google' && state.user.authProvider !== 'local'; return `<div class="modal narrow"><button class="close" data-close>X</button><span class="eyebrow">AKUN SAYA</span><h2>${privacyTab ? 'Privasi Akun' : state.user.name || 'Pengguna Rewear'}</h2><div class="account-tabs" role="tablist" aria-label="Account settings"><button type="button" class="account-tab ${privacyTab ? '' : 'active'}" role="tab" aria-selected="${!privacyTab}" data-account-tab="details">Akun</button><button type="button" class="account-tab ${privacyTab ? 'active' : ''}" role="tab" aria-selected="${privacyTab}" data-account-tab="privacy">Privasi</button></div>${privacyTab ? `<div class="privacy-details"><div class="privacy-row"><span>Username</span><b>${state.user.name || 'Pengguna Rewear'}</b></div><div class="privacy-row"><span>Email</span><b>${state.user.email || '-'}</b></div><div class="privacy-row"><span>Peran</span><b>${state.user.role || 'Pembeli'}</b></div><div class="privacy-row"><span>Password</span><b>${hasPasswordLogin ? '••••••••' : state.user.authProvider === 'google' ? 'Managed by Google' : 'Not available'}</b></div></div><p class="privacy-note">Firebase tidak dapat menampilkan password asli. Password tidak disimpan dalam bentuk teks yang dapat dibaca.</p>${hasPasswordLogin ? '<button type="button" class="primary-button full" data-password-reset>Kirim email reset password</button>' : ''}` : `<div class="payment-summary"><div><span>Username</span><b>${state.user.email}</b></div><div><span>Peran</span><span>${state.user.role || 'Pembeli'}</span></div></div><h3>Pesanan Saya</h3><div class="modal-body">${state.orders.length ? state.orders.map((order) => `<button class="order-item account-order" data-order="${order.id}"><b>${order.id}</b><span>${formatPrice(order.total)}</span></button>`).join('') : '<p>Belum ada pesanan.</p>'}</div><button class="primary-button full" data-logout>Logout</button>`}</div>`; };
-function bindAccountControls() { const modal = $('#modal'); const logoutButton = modal.querySelector('[data-logout]'); if (logoutButton) logoutButton.onclick = logout; const accountTabs = modal.querySelector('.account-tabs'); if (accountTabs && state.user?.role === 'seller' && !modal.querySelector('[data-open-seller-center]')) { const sellerButton = document.createElement('button'); sellerButton.type = 'button'; sellerButton.className = 'primary-button full'; sellerButton.dataset.openSellerCenter = ''; sellerButton.textContent = 'Buka Seller Center'; accountTabs.insertAdjacentElement('afterend', sellerButton); sellerButton.onclick = openSellerCenter; } if (state.modal === 'account' && state.accountTab !== 'privacy') { const usernameRow = [...modal.querySelectorAll('.payment-summary div')].find((row) => row.firstElementChild?.textContent === 'Username'); if (usernameRow?.lastElementChild) usernameRow.lastElementChild.textContent = getProfileName(state.user); } modal.querySelectorAll('[data-account-tab]').forEach((button) => button.onclick = () => { state.accountTab = button.dataset.accountTab; renderModal(); }); const resetButton = modal.querySelector('[data-password-reset]'); if (resetButton) resetButton.onclick = sendPasswordReset; modal.querySelectorAll('[data-order]').forEach((button) => button.onclick = () => { state.selectedOrder = state.orders.find((order) => order.id === button.dataset.order); state.modal = 'order-detail'; renderModal(); }); }
+const accountModal = () => {
+  const privacyTab = state.accountTab === 'privacy';
+  const editing = state.accountEditing && !privacyTab;
+  const hasPasswordLogin = state.user.authProvider !== 'google' && state.user.authProvider !== 'local';
+  const details = privacyTab
+    ? `<div class="privacy-details"><div class="privacy-row"><span>Username</span><b>${sellerEscape(getProfileName(state.user))}</b></div><div class="privacy-row"><span>Email</span><b>${sellerEscape(state.user.email || '-')}</b></div><div class="privacy-row"><span>Peran</span><b>${sellerEscape(state.user.role || 'Pembeli')}</b></div><div class="privacy-row"><span>Password</span><b>${hasPasswordLogin ? '••••••••' : state.user.authProvider === 'google' ? 'Managed by Google' : 'Not available'}</b></div></div><p class="privacy-note">Firebase tidak dapat menampilkan password asli. Password tidak disimpan dalam bentuk teks yang dapat dibaca.</p>${hasPasswordLogin ? '<button type="button" class="primary-button full" data-password-reset>Kirim email reset password</button>' : ''}`
+    : editing
+      ? `<form class="account-edit-form" id="account-edit-form"><label for="account-username">Username<input id="account-username" name="username" type="text" maxlength="50" autocomplete="name" value="${sellerEscape(getProfileName(state.user))}" required></label><div class="account-edit-actions"><button type="button" class="google-button" data-cancel-account-edit>Batal</button><button type="submit" class="primary-button">Simpan</button></div></form>`
+      : `<div class="payment-summary"><div><span>Username</span><b>${sellerEscape(getProfileName(state.user))}</b></div><div><span>Peran</span><span>${sellerEscape(state.user.role || 'Pembeli')}</span></div></div><button type="button" class="google-button full" data-edit-account>Edit Profil</button><h3>Pesanan Saya</h3><div class="modal-body">${state.orders.length ? state.orders.map((order) => `<button class="order-item account-order" data-order="${sellerEscape(order.id)}"><b>${sellerEscape(order.id)}</b><span>${formatPrice(order.total)}</span></button>`).join('') : '<p>Belum ada pesanan.</p>'}</div><button class="primary-button full" data-logout>Logout</button>`;
+
+  return `<div class="modal narrow"><button class="close" data-close>X</button><span class="eyebrow">AKUN SAYA</span><h2>${privacyTab ? 'Privasi Akun' : sellerEscape(getProfileName(state.user) || 'Pengguna Rewear')}</h2><div class="account-tabs" role="tablist" aria-label="Account settings"><button type="button" class="account-tab ${privacyTab ? '' : 'active'}" role="tab" aria-selected="${!privacyTab}" data-account-tab="details">Akun</button><button type="button" class="account-tab ${privacyTab ? 'active' : ''}" role="tab" aria-selected="${privacyTab}" data-account-tab="privacy">Privasi</button></div>${details}</div>`;
+};
+function bindAccountControls() {
+  const modal = $('#modal');
+  const logoutButton = modal.querySelector('[data-logout]');
+  if (logoutButton) logoutButton.onclick = logout;
+  const accountTabs = modal.querySelector('.account-tabs');
+  if (accountTabs && state.user?.role === 'seller' && !modal.querySelector('[data-open-seller-center]')) {
+    const sellerButton = document.createElement('button');
+    sellerButton.type = 'button';
+    sellerButton.className = 'primary-button full';
+    sellerButton.dataset.openSellerCenter = '';
+    sellerButton.textContent = 'Buka Seller Center';
+    accountTabs.insertAdjacentElement('afterend', sellerButton);
+    sellerButton.onclick = openSellerCenter;
+  }
+  const editButton = modal.querySelector('[data-edit-account]');
+  if (editButton) editButton.onclick = () => { state.accountEditing = true; renderModal(); };
+  const cancelEditButton = modal.querySelector('[data-cancel-account-edit]');
+  if (cancelEditButton) cancelEditButton.onclick = () => { state.accountEditing = false; renderModal(); };
+  const editForm = modal.querySelector('#account-edit-form');
+  if (editForm) editForm.onsubmit = (event) => { event.preventDefault(); saveAccountInformation(editForm); };
+  modal.querySelectorAll('[data-account-tab]').forEach((button) => button.onclick = () => {
+    state.accountTab = button.dataset.accountTab;
+    state.accountEditing = false;
+    renderModal();
+  });
+  const resetButton = modal.querySelector('[data-password-reset]');
+  if (resetButton) resetButton.onclick = sendPasswordReset;
+  modal.querySelectorAll('[data-order]').forEach((button) => button.onclick = () => {
+    state.selectedOrder = state.orders.find((order) => order.id === button.dataset.order);
+    state.modal = 'order-detail';
+    renderModal();
+  });
+}
 const ordersModal = () => `<div class="modal narrow"><button class="close" data-close>X</button><h2>Pesanan Saya</h2><div class="modal-body">${state.orders.length ? state.orders.map((order) => `<div class="order-item"><b>${order.id}</b><span>${formatPrice(order.total)}</span></div>`).join('') : '<p>Belum ada pesanan.</p>'}</div></div>`;
-const chatModal = () => { const room = state.chat.find((item) => item.room === (state.activeRoom || 'helper')) || state.chat[0]; return `<div class="modal chat-modal"><button class="close" data-close>X</button><h2>Ruang Chat</h2><div class="chat-layout"><aside>${state.chat.map((item) => `<button class="chat-room ${item.room === room.room ? 'active' : ''}" data-room="${item.room}">${item.name}</button>`).join('')}</aside><section><h3>${room.name}</h3><div class="messages">${room.messages.map((message) => `<div class="message ${message.sender}">${message.text}</div>`).join('')}</div><form id="chat-form"><input name="text" placeholder="Tulis pesan..." required><button class="primary-button">Kirim</button></form></section></div></div>`; };
+const chatModal = () => {
+  const mobile = window.matchMedia('(max-width: 680px)').matches;
+  const room = state.chat.find((item) => item.room === (state.activeRoom || 'helper')) || state.chat[0];
+  if (mobile && state.mobileChatView !== 'room') return `<div class="modal chat-modal"><button class="close" data-close aria-label="Kembali">X</button><h2>Chat</h2><div class="chat-inbox-list">${state.chat.map((item) => { const last = item.messages?.[item.messages.length - 1]; const preview = last?.text || 'Mulai percakapan'; return `<button class="chat-inbox-item" type="button" data-room="${sellerEscape(item.room)}"><span class="chat-avatar">${sellerEscape((item.name || 'R').slice(0,1).toUpperCase())}</span><span class="chat-inbox-copy"><span class="chat-inbox-head"><strong>${sellerEscape(item.name)}</strong><time>${last?.createdAt ? new Date(last.createdAt).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}) : 'Baru'}</time></span><span class="chat-inbox-preview">${sellerEscape(preview)}</span></span></button>`; }).join('')}</div></div>`;
+  return `<div class="modal chat-modal">${mobile ? `<div class="chat-room-header"><button type="button" class="chat-back" data-chat-back aria-label="Kembali ke daftar chat">←</button><span class="chat-avatar">${sellerEscape((room.name || 'R').slice(0,1).toUpperCase())}</span><h2>${sellerEscape(room.name)}</h2></div>` : '<button class="close" data-close>X</button><h2>Ruang Chat</h2>'}<div class="chat-layout"><aside>${state.chat.map((item) => `<button class="chat-room ${item.room === room.room ? 'active' : ''}" data-room="${sellerEscape(item.room)}">${sellerEscape(item.name)}</button>`).join('')}</aside><section><h3>${sellerEscape(room.name)}</h3><div class="messages">${room.messages.map((message) => `<div class="message ${sellerEscape(message.sender)}">${sellerEscape(message.text)}</div>`).join('')}</div><form id="chat-form" class="chat-form"><input name="text" placeholder="Tulis pesan..." required autocomplete="off"><button class="primary-button">Kirim</button></form></section></div></div>`;
+};
 function bindModal() { const modal = $('#modal'); modal.querySelectorAll('[data-close]').forEach((button) => button.onclick = closeModal); modal.querySelectorAll('[data-auth]').forEach((button) => button.onclick = () => { if (button.dataset.auth === 'register') state.authIntent = 'buyer'; if (button.dataset.auth === 'seller-register') state.authIntent = 'seller'; state.authMode = button.dataset.auth; renderModal(); }); modal.querySelectorAll('[data-contact-seller]').forEach((button) => button.onclick = () => beginSellerInquiry(button.dataset.contactSeller, button.dataset.contactProduct, button.dataset.contactName)); const form = modal.querySelector('#auth-form');
 
 if (form) form.onsubmit = async (event) => {
@@ -520,8 +758,8 @@ if (form) form.onsubmit = async (event) => {
     showToast(firebaseAuthErrorMessage(error));
   }
 };
-const google = modal.querySelector('[data-google]'); if (google) google.onclick = () => state.authIntent === 'seller' ? showToast('Seller accounts must use the registered seller email and password.') : signInWithGoogle(); const detail = modal.querySelector('[data-detail-add]'); if (detail) detail.onclick = () => requireLogin(() => addToCart(state.selectedProduct)); modal.querySelectorAll('[data-cart-delete]').forEach((button) => button.onclick = () => removeFromCart(Number(button.dataset.cartDelete))); const checkoutButton = modal.querySelector('[data-checkout]'); if (checkoutButton) checkoutButton.onclick = checkout; const paymentForm = modal.querySelector('#payment-form'); if (paymentForm) paymentForm.onsubmit = (event) => { event.preventDefault(); completePayment(paymentForm); }; modal.querySelectorAll('[data-room]').forEach((button) => button.onclick = () => { state.activeRoom = button.dataset.room; renderModal(); }); const chatForm = modal.querySelector('#chat-form'); if (chatForm) chatForm.onsubmit = (event) => { event.preventDefault(); const data = new FormData(chatForm); const room = state.chat.find((item) => item.room === (state.activeRoom || 'helper')); room.messages.push({ sender: 'user', text: data.get('text') }); save(`rewear-chat-${accountKey()}`, state.chat); renderModal(); }; modal.querySelectorAll('[data-product]').forEach((button) => button.onclick = () => openProduct(products.find((product) => String(product.id) === button.dataset.product))); modal.querySelectorAll('[data-store]').forEach((button) => button.onclick = () => openStore(button.dataset.store)); modal.querySelectorAll('[data-add]').forEach((button) => button.onclick = () => addToCart(products.find((product) => String(product.id) === button.dataset.add))); }
-$('#search').oninput = (event) => { state.search = event.target.value; render(); }; $('#search-button').onclick = () => { document.getElementById('products').scrollIntoView({ behavior: 'smooth' }); $('#search').focus(); }; $('#sort').onchange = (event) => { state.sort = event.target.value; render(); }; $('#category-list').onclick = (event) => { if (event.target.matches('[data-category]')) { state.category = event.target.dataset.category; render(); document.getElementById('products').scrollIntoView({ behavior: 'smooth' }); } }; $('#condition-list').onclick = (event) => { if (event.target.matches('[data-condition]')) { state.condition = event.target.dataset.condition; render(); } }; $('#chat-button').onclick = () => requireLogin(() => { state.modal = 'chat'; state.activeRoom = 'helper'; renderModal(); }); $('#cart-button').onclick = () => requireLogin(() => { state.modal = 'cart'; renderModal(); }); $('#login-button').onclick = () => { state.modal = 'auth'; state.authMode = 'login'; renderModal(); }; $('#register-button').onclick = () => { state.modal = 'auth'; state.authMode = 'register'; renderModal(); }; $('#seller-button').onclick = () => { state.modal = 'auth'; state.authMode = 'seller-register'; renderModal(); };
+const google = modal.querySelector('[data-google]'); if (google) google.onclick = () => state.authIntent === 'seller' ? showToast('Seller accounts must use the registered seller email and password.') : signInWithGoogle(); const detail = modal.querySelector('[data-detail-add]'); if (detail) detail.onclick = () => requireLogin(() => addToCart(state.selectedProduct)); modal.querySelectorAll('[data-cart-delete]').forEach((button) => button.onclick = () => removeFromCart(Number(button.dataset.cartDelete))); const checkoutButton = modal.querySelector('[data-checkout]'); if (checkoutButton) checkoutButton.onclick = checkout; const paymentForm = modal.querySelector('#payment-form'); if (paymentForm) paymentForm.onsubmit = (event) => { event.preventDefault(); completePayment(paymentForm); }; modal.querySelectorAll('[data-room]').forEach((button) => button.onclick = () => { state.activeRoom = button.dataset.room; if (window.matchMedia('(max-width: 680px)').matches) { state.mobileChatView = 'room'; setMobilePage('chatroom'); } renderModal(); }); const backToChatList = modal.querySelector('[data-chat-back]'); if (backToChatList) backToChatList.onclick = () => { state.mobileChatView = 'inbox'; setMobilePage('chat'); renderModal(); }; const chatForm = modal.querySelector('#chat-form'); if (chatForm) chatForm.onsubmit = (event) => { event.preventDefault(); const data = new FormData(chatForm); const room = state.chat.find((item) => item.room === (state.activeRoom || 'helper')); room.messages.push({ sender: 'user', text: data.get('text') }); save(`rewear-chat-${accountKey()}`, state.chat); renderModal(); }; modal.querySelectorAll('[data-product]').forEach((button) => button.onclick = () => openProduct(products.find((product) => String(product.id) === button.dataset.product))); modal.querySelectorAll('[data-store]').forEach((button) => button.onclick = () => openStore(button.dataset.store)); modal.querySelectorAll('[data-add]').forEach((button) => button.onclick = () => addToCart(products.find((product) => String(product.id) === button.dataset.add))); }
+$('#search').oninput = (event) => { state.search = event.target.value; render(); }; $('#search-button').onclick = () => { setMobilePage('products'); document.getElementById('products').scrollIntoView({ behavior: 'auto' }); $('#search').focus(); }; $('#sort').onchange = (event) => { state.sort = event.target.value; render(); }; $('#category-list').onclick = (event) => { if (event.target.matches('[data-category]')) { state.category = event.target.dataset.category; render(); setMobilePage('products'); document.getElementById('products').scrollIntoView({ behavior: 'auto' }); } }; $('#condition-list').onclick = (event) => { if (event.target.matches('[data-condition]')) { state.condition = event.target.dataset.condition; render(); } }; $('#chat-button').onclick = () => requireLogin(() => { state.modal = 'chat'; state.activeRoom = 'helper'; renderModal(); }); $('#cart-button').onclick = () => requireLogin(() => { state.modal = 'cart'; renderModal(); }); $('#login-button').onclick = () => { state.modal = 'auth'; state.authMode = 'login'; renderModal(); }; $('#register-button').onclick = () => { state.modal = 'auth'; state.authMode = 'register'; renderModal(); }; $('#seller-button').onclick = () => { state.modal = 'auth'; state.authMode = 'seller-register'; renderModal(); };
 const sellerOwnerId = (email = state.user?.email || state.user?.name || '') => String(email).trim().toLowerCase();
 const sellerRoleKey = (email) => `rewear-seller-role-${sellerOwnerId(email)}`;
 const sellerKey = () => state.user ? `rewear-seller-${sellerOwnerId()}` : 'rewear-seller-guest';
@@ -681,6 +919,48 @@ const bindSellerControls = () => {
   document.querySelectorAll('[data-buyer-review]').forEach((form) => form.onsubmit = (event) => { event.preventDefault(); const order = state.selectedOrder; const sellerId = form.dataset.reviewSeller; const productId = form.dataset.reviewProduct; if (!order || order.status !== 'Completed' || state.user?.role === 'seller' || sellerOwnerId() === sellerId) { showToast('Ulasan hanya tersedia untuk pembeli setelah pesanan selesai.'); return; } const purchased = order.items.some((item) => item.product?.sellerId === sellerId && String(item.product.sellerProductId) === String(productId)); const rating = Number(new FormData(form).get('rating')); const text = String(new FormData(form).get('text') || '').trim(); if (!purchased || !Number.isInteger(rating) || rating < 1 || rating > 5 || !text) { showToast('Periksa rating dan isi ulasan sebelum menyimpan.'); return; } const reviews = sellerCollectionFor(sellerId, 'reviews', []); if (reviews.some((review) => review.buyerKey === accountKey() && String(review.productId) === String(productId))) { showToast('Kamu sudah mengulas produk ini.'); return; } const product = order.items.find((item) => item.product?.sellerId === sellerId && String(item.product.sellerProductId) === String(productId)).product; reviews.unshift({ id: `REV-${Date.now()}`, orderId: order.id, sellerId, productId, product: product.name, buyerKey: accountKey(), buyer: state.user.name || state.user.email, rating, text, reply: '', createdAt: Date.now() }); save(`rewear-seller-${sellerId}-reviews`, reviews); renderModal(); showToast('Ulasan berhasil dikirim'); });
   document.querySelectorAll('[data-seller-review-reply]').forEach((button) => button.onclick = () => { const reviews = sellerReviews(); const review = reviews.find((item) => String(item.id) === button.dataset.sellerReviewReply); if (!review) return; const reply = window.prompt('Balas ulasan pembeli:', review.reply || ''); if (!reply || !reply.trim()) return; review.reply = reply.trim(); review.replyAt = Date.now(); sellerSave('reviews', reviews); renderModal(); showToast('Balasan ulasan berhasil disimpan'); });
 };
+const renderBottomNavigation = () => {
+  const nav = $('#mobile-bottom-nav');
+  if (!nav) return;
+  const isSeller = state.user?.role === 'seller';
+  nav.classList.toggle('is-seller', isSeller);
+  const addButton = isSeller ? `<button type="button" data-bottom-action="add" class="bottom-nav-item add-product"><span class="bottom-nav-icon" aria-hidden="true">+</span><span>Tambah</span></button>` : '';
+  nav.innerHTML = `
+    <button type="button" data-bottom-action="home" class="bottom-nav-item active"><span class="bottom-nav-icon" aria-hidden="true">⌂</span><span>Beranda</span></button>
+    <button type="button" data-bottom-action="flash" class="bottom-nav-item"><span class="bottom-nav-icon" aria-hidden="true">％</span><span>Flash Sale</span></button>
+    ${addButton}
+    <button type="button" data-bottom-action="chat" class="bottom-nav-item"><span class="bottom-nav-icon" aria-hidden="true">✉</span><span>Chat</span></button>
+    <button type="button" data-bottom-action="me" class="bottom-nav-item"><span class="bottom-nav-icon" aria-hidden="true">♙</span><span>Saya</span></button>`;
+};
+const bindBottomNavigation = () => {
+  const nav = $('#mobile-bottom-nav');
+  if (!nav) return;
+  nav.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-bottom-action]');
+    if (!button) return;
+    const action = button.dataset.bottomAction;
+    if (action !== 'add') nav.querySelectorAll('.bottom-nav-item').forEach((item) => item.classList.toggle('active', item === button));
+    if (action === 'home') {
+      setMobilePage('home');
+    } else if (action === 'flash') {
+      setMobilePage('flash');
+    } else if (action === 'add') {
+      if (state.user?.role === 'seller') {
+        state.sellerPage = 'add-product';
+        state.editingSellerProduct = null;
+        state.modal = 'seller-center';
+        renderModal();
+      } else {
+        openAuth('seller');
+      }
+    } else if (action === 'chat') {
+      requireLogin(() => { state.activeRoom = 'helper'; state.mobileChatView = 'inbox'; state.modal = 'chat'; setMobilePage('chat'); renderModal(); });
+    } else if (action === 'me') {
+      if (state.user) { state.accountTab = 'details'; state.modal = 'account'; setMobilePage('profile'); renderModal(); }
+      else { state.modal = 'auth'; state.authMode = 'login'; renderModal(); }
+    }
+  });
+};
 if (firebaseAuth) firebaseAuth.onAuthStateChanged(async (firebaseUser) => {
   if (!firebaseUser || !state.user || state.user.email !== (firebaseUser.email || firebaseUser.uid)) return;
   const isAdmin = await hasFirebaseAdminClaim(firebaseUser);
@@ -694,6 +974,8 @@ if (firebaseAuth) firebaseAuth.onAuthStateChanged(async (firebaseUser) => {
 });
 if (state.user?.role === 'seller' && state.user.email) localStorage.setItem(sellerRoleKey(state.user.email), 'seller');
 bindMobileMenu();
+bindBottomNavigation();
+setMobilePage('home', { scroll: false });
 hydrateAccount(); render();
 </script>
   </body>
