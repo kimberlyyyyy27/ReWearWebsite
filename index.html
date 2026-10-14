@@ -277,13 +277,13 @@
   body.mobile-page-profile .site-header,
   body.mobile-page-profile .announcement,
   body.mobile-page-profile main,
-  body.mobile-page-profile #mobile-bottom-nav {display:none!important}
+  body.mobile-page-profile #mobile-bottom-nav,\n  body.mobile-page-payment .site-header,\n  body.mobile-page-payment .announcement,\n  body.mobile-page-payment main,\n  body.mobile-page-payment #mobile-bottom-nav {display:none!important}
   body.mobile-page-chat #modal,
   body.mobile-page-chatroom #modal,
-  body.mobile-page-profile #modal {position:fixed;inset:0;z-index:10020;display:block!important;padding:0;background:#fff;backdrop-filter:none;overflow-y:auto}
+  body.mobile-page-profile #modal,\n  body.mobile-page-payment #modal {position:fixed;inset:0;z-index:10020;display:block!important;padding:0;background:#fff;backdrop-filter:none;overflow-y:auto}
   body.mobile-page-chat #modal .modal,
   body.mobile-page-chatroom #modal .modal,
-  body.mobile-page-profile #modal .modal {width:100%;max-width:none;min-height:100dvh;max-height:none;margin:0;padding:22px 18px calc(24px + env(safe-area-inset-bottom));border-radius:0;box-shadow:none;overflow:visible}
+  body.mobile-page-profile #modal .modal,\n  body.mobile-page-payment #modal .modal {width:100%;max-width:none;min-height:100dvh;max-height:none;margin:0;padding:22px 18px calc(24px + env(safe-area-inset-bottom));border-radius:0;box-shadow:none;overflow:visible}
   body.mobile-page-chat #modal .close,
   body.mobile-page-chatroom #modal .close,
   body.mobile-page-profile #modal .close {position:static;float:left;margin:0 14px 12px 0;color:#4a1420;background:transparent;font-size:0;width:34px;height:34px}
@@ -324,6 +324,20 @@
   body.mobile-page-chatroom #modal .chat-form {display:flex;gap:8px;position:static;padding:12px 0 4px;background:#fff;flex:0 0 auto}
   body.mobile-page-chatroom #modal .chat-form input {min-width:0;flex:1;border-radius:24px;padding:12px 14px}
   body.mobile-page-chatroom #modal .chat-form button {border-radius:24px;padding:0 18px}
+  body.mobile-page-payment #modal .payment-page-modal {display:block;min-height:100dvh;padding:0 18px calc(28px + env(safe-area-inset-bottom));overflow-y:auto}
+  body.mobile-page-payment #modal .payment-page-header {position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:12px;margin:0 -18px 18px;padding:12px 18px;background:#fff;border-bottom:1px solid #eee7e3}
+  body.mobile-page-payment #modal .payment-page-header h2 {margin:0!important;padding:0!important;font-size:22px!important}
+  body.mobile-page-payment #modal .payment-back {width:36px;height:36px;flex:0 0 36px;background:transparent;color:#4a1420;font-size:30px;line-height:1}
+  body.mobile-page-payment #modal .payment-page-modal .close {display:none}
+  body.mobile-page-payment #modal .payment-form {min-width:0}
+  body.mobile-page-payment #modal .payment-form input:not([type=checkbox]), body.mobile-page-payment #modal .payment-form select, body.mobile-page-payment #modal .payment-form textarea {min-width:0;max-width:100%}
+  body.mobile-page-payment #modal .payment-row {grid-template-columns:minmax(0,1fr)}
+  body.mobile-page-payment #modal .payment-summary div {min-width:0;overflow-wrap:anywhere}
+  body.mobile-page-payment #modal .payment-summary b {text-align:right;overflow-wrap:anywhere}
+  .demo-note {padding:10px 12px;border-radius:7px;background:#eaf7fb;color:#274c57;font-size:12px;line-height:1.5}
+  .checkout-step {color:#7b7070;font-size:12px;line-height:1.5}
+  .cod-confirm {display:flex!important;grid-template-columns:20px 1fr;align-items:start;gap:9px!important;line-height:1.5}
+  .cod-confirm input {width:18px!important;height:18px;margin:0;flex:0 0 18px}
   body.mobile-page-profile .payment-summary {margin:18px 0}
   body.mobile-page-profile .modal-body {padding-bottom:10px}
 }
@@ -573,8 +587,83 @@ const addToCart = (product) => requireLogin(() => { if (state.cart.some((entry) 
 const updateCart = () => save(`rewear-cart-${accountKey()}`, state.cart);
 const removeFromCart = (productId) => { state.cart = state.cart.filter((entry) => entry.product.id !== productId); updateCart(); renderModal(); };
 const shippingRates = { regular: 15000, express: 25000, cargo: 40000 };
-const checkout = () => { if (!state.cart.length) return; state.modal = 'payment'; renderModal(); };
-const completePayment = (form) => { const data = new FormData(form); const items = state.cart.map((item) => ({ ...item, quantity: Math.max(1, Number(item.quantity) || 1) })); const subtotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0); const shippingMethod = data.get('shipping-method'); const shippingCost = shippingRates[shippingMethod] || shippingRates.regular; const total = subtotal + shippingCost; const order = { id: `RW-${Date.now()}`, subtotal, shippingCost, total, items, recipient: data.get('recipient'), address: data.get('address'), paymentMethod: data.get('payment-method'), shippingMethod, status: 'New', sellerStatuses: {} }; state.orders.unshift(order); save(`rewear-orders-${accountKey()}`, state.orders); const sellerGroups = new Map(); items.forEach((item) => { const sellerId = item.product.sellerId; if (sellerId) sellerGroups.set(sellerId, [...(sellerGroups.get(sellerId) || []), item]); }); sellerGroups.forEach((sellerItems, sellerId) => { const key = `rewear-seller-${sellerId}-orders`; const sellerOrderList = load(key, []); const sellerSubtotal = sellerItems.reduce((sum, item) => sum + Number(item.product.price) * item.quantity, 0); const sellerShipping = Math.round(shippingCost * sellerSubtotal / (subtotal || 1)); sellerOrderList.unshift({ id: order.id, buyerOrderId: order.id, sellerId, buyerKey: accountKey(), buyer: state.user?.name || state.user?.email || 'Buyer', buyerEmail: state.user?.email || '', recipient: order.recipient, address: order.address, items: sellerItems, subtotal: sellerSubtotal, shippingCost: sellerShipping, amount: sellerSubtotal + sellerShipping, shipping: shippingMethod, shippingMethod, status: 'New', courierName: '', trackingNumber: '', createdAt: Date.now() }); save(key, sellerOrderList); }); state.cart = []; updateCart(); state.modal = 'order-detail'; state.selectedOrder = order; render(); renderModal(); showToast('Pembayaran berhasil, pesanan dibuat'); };
+const checkout = () => {
+  if (!state.cart.length) return;
+  state.paymentStage = 'form';
+  state.paymentDraft = { recipient: state.user?.name || '', phone: '', address: '', shippingMethod: 'regular', paymentMethod: 'Kartu debit/kredit', bank: 'BCA' };
+  state.paymentBusy = false;
+  state.modal = 'payment';
+  if (window.matchMedia('(max-width: 680px)').matches) setMobilePage('payment');
+  renderModal();
+};
+const completePayment = (form) => {
+  if (state.paymentBusy) return;
+  const data = new FormData(form);
+  const method = String(data.get('payment-method') || 'Kartu debit/kredit');
+  const recipient = String(data.get('recipient') || '').trim();
+  const phone = String(data.get('phone') || '').trim();
+  const address = String(data.get('address') || '').trim();
+  if (!recipient || !phone || !address) { showToast('Lengkapi nama penerima, nomor telepon, dan alamat.'); return; }
+  if (!/^[0-9+()\\s-]{8,20}$/.test(phone)) { showToast('Masukkan nomor telepon yang valid.'); form.querySelector('[name="phone"]').focus(); return; }
+  if (method === 'Kartu debit/kredit') {
+    const holder = String(data.get('card-holder') || '').trim();
+    const number = String(data.get('card-number') || '').replace(/\\s/g, '');
+    const expiry = String(data.get('expiry') || '').trim();
+    const cvv = String(data.get('cvv') || '').trim();
+    if (!holder || !/^\d{13,19}$/.test(number) || !/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiry) || !/^\d{3,4}$/.test(cvv)) {
+      showToast('Periksa nama pemegang kartu, nomor kartu, masa berlaku MM/YY, dan CVV.'); return;
+    }
+    const [month, year] = expiry.split('/').map(Number);
+    const now = new Date();
+    if (year < now.getFullYear() % 100 || (year === now.getFullYear() % 100 && month < now.getMonth() + 1)) { showToast('Kartu sudah kedaluwarsa.'); return; }
+  }
+  state.paymentBusy = true;
+  const submit = form.querySelector('#payment-submit');
+  if (submit) { submit.disabled = true; submit.textContent = 'Memproses…'; }
+  // Card credentials are used only for client-side validation and are never persisted.
+  const items = state.cart.map((item) => ({ product: { ...item.product }, quantity: Math.max(1, Number(item.quantity) || 1) }));
+  const subtotal = items.reduce((sum, item) => sum + Number(item.product.price) * item.quantity, 0);
+  const shippingMethod = String(data.get('shipping-method') || 'regular');
+  const shippingCost = shippingRates[shippingMethod] || shippingRates.regular;
+  const total = subtotal + shippingCost;
+  const id = `RW-${Date.now().toString(36).toUpperCase()}`;
+  const order = {
+    id, items, subtotal, shippingCost, discount: 0, total, recipient, phone, address,
+    paymentMethod: method, bank: method === 'Transfer bank' ? String(data.get('bank') || 'BCA') : '',
+    shippingMethod, createdAt: new Date().toISOString(),
+    paymentStatus: method === 'COD' ? 'Bayar di tempat' : method === 'Transfer bank' ? 'Menunggu pembayaran' : 'Memproses pembayaran',
+    orderStatus: method === 'COD' ? 'Menunggu pengiriman' : method === 'Transfer bank' ? 'Menunggu pembayaran' : 'Memproses pembayaran',
+    status: method === 'COD' ? 'New' : method === 'Transfer bank' ? 'Awaiting Payment' : 'Processing',
+    sellerStatuses: {}
+  };
+  window.setTimeout(() => {
+    if (method === 'Kartu debit/kredit') {
+      // Explicitly a local prototype simulation; no real charge is made.
+      order.paymentStatus = 'Sudah dibayar';
+      order.orderStatus = 'Menunggu pengiriman';
+      order.status = 'New';
+    }
+    if (method === 'Transfer bank') {
+      order.virtualAccount = ({ BCA: '39012', BNI: '88018', BRI: '26215', Mandiri: '70012' }[order.bank] || '39012') + String(Date.now()).slice(-10);
+    }
+    state.orders.unshift(order);
+    save(`rewear-orders-${accountKey()}`, state.orders);
+    const sellerGroups = new Map();
+    items.forEach((item) => { const sellerId = item.product.sellerId; if (sellerId) sellerGroups.set(sellerId, [...(sellerGroups.get(sellerId) || []), item]); });
+    sellerGroups.forEach((sellerItems, sellerId) => {
+      const key = `rewear-seller-${sellerId}-orders`; const list = load(key, []);
+      const sellerSubtotal = sellerItems.reduce((sum, item) => sum + Number(item.product.price) * item.quantity, 0);
+      list.unshift({ id, buyerOrderId: id, sellerId, buyerKey: accountKey(), buyer: state.user?.name || state.user?.email || 'Buyer', buyerEmail: state.user?.email || '', recipient, phone, address, items: sellerItems, subtotal: sellerSubtotal, shippingCost: Math.round(shippingCost * sellerSubtotal / (subtotal || 1)), amount: sellerSubtotal + Math.round(shippingCost * sellerSubtotal / (subtotal || 1)), shipping: shippingMethod, shippingMethod, status: order.status, createdAt: Date.now() });
+      save(key, list);
+    });
+    state.cart = []; updateCart(); state.selectedOrder = order;
+    state.paymentStage = method === 'Transfer bank' ? 'bank-instructions' : 'confirmation';
+    state.paymentBusy = false;
+    render(); renderModal();
+    if (method === 'Kartu debit/kredit') showToast('Simulasi pembayaran berhasil. Tidak ada kartu yang ditagih.');
+    else if (method === 'COD') showToast('Pesanan COD berhasil dibuat.');
+  }, 650);
+};
 const openProduct = (product) => { state.selectedProduct = product; state.modal = 'product'; renderModal(); };
 const openStore = (name) => { state.selectedStore = name; state.modal = 'store'; renderModal(); };
 function openAuth(mode) { state.authMode = mode; state.authIntent = mode === 'seller' || mode === 'seller-register' ? 'seller' : 'buyer'; state.modal = 'auth'; renderModal(); }
@@ -609,7 +698,7 @@ const saveAccountInformation = async (form) => {
 const logout = async () => { let signOutFailed = false; try { if (firebaseAuth) await firebaseAuth.signOut(); } catch (error) { signOutFailed = true; console.error('Firebase sign-out failed:', error); } state.user = null; localStorage.removeItem('rewear-user'); state.modal = null; state.selectedOrder = null; state.accountTab = 'details'; hydrateAccount(); render(); renderModal(); showToast(signOutFailed ? 'Local logout completed, but Firebase sign-out failed.' : 'Kamu sudah keluar'); };
 const card = (product) => { const id = String(product.id); const favorite = state.favorites.some((item) => String(item) === id); return `<article class="product-card"><button class="product-image" data-product="${sellerEscape(id)}"><img src="${sellerEscape(product.image)}" alt="${sellerEscape(product.name)}"><span class="ribbon ${product.ribbon === 'Hot Offer' ? 'orange' : product.ribbon === 'Murah' ? 'sky' : ''}">${sellerEscape(product.ribbon || 'Baru')}</span><span class="discount">-${discount(product)}%</span></button><button class="heart ${favorite ? 'active' : ''}" data-favorite="${sellerEscape(id)}">${favorite ? '&#9829;' : '&#9825;'}</button><div class="product-info"><strong class="brand">${sellerEscape(product.brand)}</strong><h3>${sellerEscape(product.name)}</h3><button class="store-link" data-store="${sellerEscape(product.sellerName || storeName)}">Dijual oleh ${sellerEscape(product.sellerName || storeName)}</button><div class="price-row"><b>${formatPrice(product.price)}</b><del>${formatPrice(product.originalPrice)}</del></div><div class="meta">${sellerEscape(product.size)} <span>-</span> ${sellerEscape(product.condition)}</div><small>${sellerEscape(product.location)} 🏠︎ ${Number(product.viewed) || 0} Dilihat</small></div><button class="quick-add" data-add="${sellerEscape(id)}">+ Keranjang</button></article>`; };
 const setMobilePage = (page, options = {}) => {
-  const allowed = ['home', 'flash', 'products', 'chat', 'chatroom', 'profile'];
+  const allowed = ['home', 'flash', 'products', 'chat', 'chatroom', 'profile', 'payment'];
   if (!allowed.includes(page)) page = 'home';
   const currentPage = allowed.find((name) => document.body.classList.contains(`mobile-page-${name}`)) || 'home';
   if (currentPage !== page) clearToast();
@@ -625,7 +714,7 @@ const setMobilePage = (page, options = {}) => {
 function render() { hydrateAccount(); updateAuthHeader(); renderMobileMenu(); renderBottomNavigation(); syncFilterButtons(); products = [...baseProducts, ...sellerMarketplaceProducts()]; const list = filtered(); $('#product-count').textContent = `${list.length} produk ditemukan`; $('#products-grid').innerHTML = list.map(card).join(''); $('#flash-grid').innerHTML = products.slice(0, 4).map(card).join(''); bindCards(); }
 function bindCards() { document.querySelectorAll('[data-product]').forEach((button) => button.onclick = () => openProduct(products.find((product) => String(product.id) === button.dataset.product))); document.querySelectorAll('[data-add]').forEach((button) => button.onclick = () => addToCart(products.find((product) => String(product.id) === button.dataset.add))); document.querySelectorAll('[data-store]').forEach((button) => button.onclick = (event) => { event.stopPropagation(); openStore(button.dataset.store); }); document.querySelectorAll('[data-favorite]').forEach((button) => button.onclick = () => requireLogin(() => { const id = button.dataset.favorite; state.favorites = state.favorites.includes(id) ? state.favorites.filter((item) => String(item) !== id) : [...state.favorites, id]; save(`rewear-favorites-${accountKey()}`, state.favorites); render(); })); }
 function renderModal() { const modal = $('#modal'); const context = toastContextForCurrentView(); if (activeToastContext && activeToastContext !== context) clearToast(); if (!state.modal) { modal.innerHTML = ''; modal.className = 'modal-backdrop hidden'; return; } modal.className = 'modal-backdrop'; if (state.modal === 'auth') modal.innerHTML = authModal(); if (state.modal === 'product') modal.innerHTML = productModal(); if (state.modal === 'store') modal.innerHTML = storeModal(); if (state.modal === 'cart') modal.innerHTML = cartModal(); if (state.modal === 'payment') modal.innerHTML = paymentModal(); if (state.modal === 'order-detail') modal.innerHTML = orderDetailModal(); if (state.modal === 'orders') modal.innerHTML = ordersModal(); if (state.modal === 'account') modal.innerHTML = accountModal(); if (state.modal === 'chat') modal.innerHTML = chatModal(); if (state.modal === 'seller-center') modal.innerHTML = sellerCenter(); bindModal(); bindAccountControls(); bindPaymentControls(); bindSellerControls(); }
-const closeModal = () => { const wasMobilePage = window.matchMedia('(max-width: 680px)').matches && ['chat','account'].includes(state.modal); state.modal = null; renderModal(); if (wasMobilePage) setMobilePage('home'); };
+const closeModal = () => { const wasMobilePage = window.matchMedia('(max-width: 680px)').matches && (['chat','account','payment'].includes(state.modal) || document.body.classList.contains('mobile-page-payment')); state.modal = null; renderModal(); if (wasMobilePage) setMobilePage('home'); };
 const authModal = () => { const sellerMode = state.authMode === 'seller';
 const sellerRegister = state.authMode === 'seller-register';
 const loginMode = state.authMode === 'login'; return `<div class="modal auth-modal"><button class="close" data-close>X</button><div class="auth-head"><b>RE<span class="circle-logo"></span>WEAR</b><div class="auth-tabs">
@@ -636,9 +725,82 @@ const loginMode = state.authMode === 'login'; return `<div class="modal auth-mod
 const productModal = () => { const p = state.selectedProduct; const isOwnListing = p.sellerId && state.user && sellerOwnerId() === p.sellerId; const threads = p.sellerId && state.user && !isOwnListing ? sellerCollectionFor(p.sellerId, 'messages', []).filter((message) => message.buyerKey === accountKey() && String(message.productId) === String(p.sellerProductId)) : []; return `<div class="modal product-modal"><button class="close" data-close>X</button><div class="product-detail"><img src="${sellerEscape(p.image)}" alt="${sellerEscape(p.name)}"><div><span class="eyebrow">${sellerEscape(p.condition.toUpperCase())}</span><p class="brand">${sellerEscape(p.brand)}</p><h2>${sellerEscape(p.name)}</h2><button class="store-link" data-store="${sellerEscape(p.sellerName || storeName)}">Dijual oleh ${sellerEscape(p.sellerName || storeName)}</button><div class="detail-price">${formatPrice(p.price)} <del>${formatPrice(p.originalPrice)}</del></div><p>${sellerEscape(p.description || 'Kondisi sangat terawat, siap menemani gaya kamu berikutnya.')}</p><div class="detail-specs">Ukuran <b>${sellerEscape(p.size)}</b><br>Lokasi <b>${sellerEscape(p.location)}</b><br>Views <b>${Number(p.viewed) || 0}</b></div>${p.sellerId && !isOwnListing ? `<button type="button" class="google-button full" data-contact-seller="${sellerEscape(p.sellerId)}" data-contact-product="${sellerEscape(p.sellerProductId)}" data-contact-name="${sellerEscape(p.name)}">Tanya Seller</button>${threads.map((thread) => `<div class="seller-message">${(thread.conversation || []).map((message) => `<p><b>${message.sender === 'seller' ? 'Seller' : 'Kamu'}:</b> ${sellerEscape(message.text)}</p>`).join('')}</div>`).join('')}` : ''}<button class="primary-button full" data-detail-add="${sellerEscape(p.id)}">Tambah ke Keranjang</button></div></div></div>`; };
 const storeModal = () => `<div class="modal store-modal"><button class="close" data-close>X</button><div class="store-header"><span class="eyebrow">TOKO</span><h2>${state.selectedStore}</h2><p>${products.length} produk tersedia</p></div><div class="store-product-grid">${products.map(card).join('')}</div></div>`;
 const cartModal = () => `<div class="modal narrow"><button class="close" data-close>X</button><h2>Keranjang Kamu</h2><div class="modal-body">${state.cart.length ? `${state.cart.map((item) => `<div class="cart-item"><img src="${item.product.image}" alt="${item.product.name}"><span><b>${item.product.name}</b><small>${formatPrice(item.product.price)}</small><button class="cart-delete" data-cart-delete="${item.product.id}">Hapus</button></span></div>`).join('')}<button class="primary-button full" data-checkout>Checkout</button>` : '<p>Keranjang masih kosong.</p>'}</div></div>`;
-const paymentModal = () => { const subtotal = state.cart.reduce((sum, item) => sum + item.product.price, 0); const shippingCost = shippingRates.regular; const total = subtotal + shippingCost; return `<div class="modal payment-modal"><button class="close" data-close>X</button><h2>Checkout & Pembayaran</h2><div class="payment-summary"><div><span>Subtotal</span><b id="payment-subtotal">${formatPrice(subtotal)}</b></div><div><span>Ongkir</span><b id="shipping-cost">${formatPrice(shippingCost)}</b></div><div><span>Total</span><b id="payment-total">${formatPrice(total)}</b></div></div><form class="payment-form" id="payment-form"><label>Nama penerima<input name="recipient" placeholder="Nama lengkap" required></label><label>Alamat pengiriman<textarea name="address" rows="3" placeholder="Alamat lengkap" required></textarea></label><label>Pilih layanan pengiriman<select name="shipping-method" id="shipping-method"><option value="regular">Regular Service (REG) - ${formatPrice(shippingRates.regular)} / 1-3 hari</option><option value="express">Express / Next Day (YES/Super) - ${formatPrice(shippingRates.express)}</option><option value="cargo">Cargo / Heavy Packages (JTR/Pos Kargo) - mulai ${formatPrice(shippingRates.cargo)}</option></select></label><label>Metode pembayaran<select name="payment-method"><option value="Kartu debit/kredit">Kartu debit/kredit</option><option value="Transfer bank">Transfer bank</option><option value="COD">Bayar di tempat (COD)</option></select></label><div class="payment-row"><label>Nomor kartu<input name="card-number" inputmode="numeric" placeholder="1234 5678 9012 3456"></label><label>Berlaku sampai<input name="expiry" placeholder="MM/YY"></label></div><button class="primary-button full" type="submit" id="payment-submit">Bayar ${formatPrice(total)}</button></form></div>`; };
-function bindPaymentControls() { const shippingSelect = $('#shipping-method'); if (!shippingSelect) return; shippingSelect.onchange = () => { const subtotal = state.cart.reduce((sum, item) => sum + item.product.price, 0); const shippingCost = shippingRates[shippingSelect.value] || shippingRates.regular; const total = subtotal + shippingCost; $('#shipping-cost').textContent = formatPrice(shippingCost); $('#payment-total').textContent = formatPrice(total); $('#payment-submit').textContent = `Bayar ${formatPrice(total)}`; }; }
-const orderDetailModal = () => { const order = state.selectedOrder; if (!order) return '<div class="modal narrow"><button class="close" data-close>X</button><p>Order details are unavailable.</p></div>'; return `<div class="modal narrow"><button class="close" data-close>X</button><span class="eyebrow">PESANAN</span><h2>Detail Pesanan</h2><p><b>${sellerEscape(order.id)}</b></p><div class="modal-body">${order.items.map((item) => `<div class="order-item"><span><b>${sellerEscape(item.product.name)}</b><small>${Number(item.quantity) || 1} × ${sellerEscape(item.product.brand)}</small></span><strong>${formatPrice(item.product.price * (Number(item.quantity) || 1))}</strong></div>`).join('')}<div class="payment-summary"><div><span>Status</span><b>${sellerEscape(order.status || 'New')}</b></div><div><span>Subtotal</span><b>${formatPrice(order.subtotal || order.total)}</b></div><div><span>Pengiriman</span><span>${sellerEscape(order.shippingMethod || 'Regular Service (REG)')}</span></div><div><span>Ongkir</span><span>${formatPrice(order.shippingCost || 0)}</span></div><div><span>Total</span><b>${formatPrice(order.total)}</b></div><div><span>Pembayaran</span><span>${sellerEscape(order.paymentMethod)}</span></div><div><span>Penerima</span><span>${sellerEscape(order.recipient)}</span></div><div><span>Alamat</span><span>${sellerEscape(order.address)}</span></div>${Object.entries(order.shipments || {}).map(([sellerId, shipment]) => `<div><span>Kurir (${sellerEscape(sellerId)})</span><span>${sellerEscape(shipment.courierName || '-')} · ${sellerEscape(shipment.trackingNumber || '-')} · ${sellerEscape(shipment.status || '-')}</span></div>`).join('')}</div>${sellerReviewSection(order)}<button class="primary-button full" data-close>Lanjut Belanja</button></div></div>`; };
+const paymentModal = () => {
+  const order = state.selectedOrder;
+  const stage = state.paymentStage || 'form';
+  const mobile = window.matchMedia('(max-width: 680px)').matches;
+  if (stage === 'bank-instructions' && order) return `<div class="modal payment-modal payment-page-modal"><div class="payment-page-header"><button type="button" class="payment-back" data-payment-back aria-label="Kembali">←</button><h2>Instruksi Transfer</h2></div><p class="demo-note">DEMO — virtual account ini simulasi, bukan instruksi transfer bank sungguhan.</p><div class="payment-summary"><div><span>Nomor pesanan</span><b>${sellerEscape(order.id)}</b></div><div><span>Bank</span><b>${sellerEscape(order.bank)}</b></div><div><span>Virtual account demo</span><b id="virtual-account">${sellerEscape(order.virtualAccount)}</b></div><button type="button" class="google-button full" data-copy-va>Salin nomor virtual account</button><div><span>Total transfer</span><b>${formatPrice(order.total)}</b></div><div><span>Status pembayaran</span><b>${sellerEscape(order.paymentStatus)}</b></div></div><p>Untuk menguji alur prototipe, gunakan tombol simulasi di bawah. Tidak ada transfer nyata yang diperiksa.</p><button type="button" class="primary-button full" data-check-payment-status>Check payment status</button><button type="button" class="google-button full" data-demo-bank-paid>Simulasikan pembayaran berhasil</button><button type="button" class="google-button full" data-payment-finish>Lihat pesanan</button></div>`;
+  if (stage === 'confirmation' && order) return `<div class="modal payment-modal payment-page-modal"><div class="payment-page-header"><button type="button" class="payment-back" data-payment-back aria-label="Kembali">←</button><h2>Pesanan dikonfirmasi</h2></div><p class="demo-note">Pembayaran kartu pada halaman ini hanya simulasi. Tidak ada tagihan nyata.</p><div class="payment-summary"><div><span>Nomor pesanan</span><b>${sellerEscape(order.id)}</b></div><div><span>Item</span><b>${order.items.reduce((n, i) => n + i.quantity, 0)} item</b></div><div><span>Total</span><b>${formatPrice(order.total)}</b></div><div><span>Metode pembayaran</span><b>${sellerEscape(order.paymentMethod)}</b></div><div><span>Status pembayaran</span><b>${sellerEscape(order.paymentStatus)}</b></div><div><span>Status pesanan</span><b>${sellerEscape(order.orderStatus)}</b></div><div><span>Penerima</span><b>${sellerEscape(order.recipient)}</b></div><div><span>Telepon</span><b>${sellerEscape(order.phone)}</b></div><div><span>Alamat</span><b>${sellerEscape(order.address)}</b></div></div><h3>Produk</h3>${order.items.map((item) => `<div class="order-item"><span>${sellerEscape(item.product.name)} × ${item.quantity}</span><b>${formatPrice(item.product.price * item.quantity)}</b></div>`).join('')}<button type="button" class="primary-button full" data-payment-finish>Lihat pesanan</button></div>`;
+  const subtotal = state.cart.reduce((sum, item) => sum + item.product.price * (Number(item.quantity) || 1), 0);
+  const shippingMethod = state.paymentDraft?.shippingMethod || 'regular';
+  const shippingCost = shippingRates[shippingMethod] || shippingRates.regular;
+  const total = subtotal + shippingCost;
+  const method = state.paymentDraft?.paymentMethod || 'Kartu debit/kredit';
+  return `<div class="modal payment-modal payment-page-modal"><div class="payment-page-header"><button type="button" class="payment-back" data-payment-back aria-label="Kembali">←</button><h2>Payment</h2></div><p class="checkout-step">1. Review pesanan · 2. Detail pengiriman · 3. Pembayaran · 4. Konfirmasi</p><div class="payment-summary"><div><span>Produk (${state.cart.reduce((n,i)=>n+(Number(i.quantity)||1),0)} item)</span><b>${formatPrice(subtotal)}</b></div>${state.cart.map((item) => `<div><span>${sellerEscape(item.product.name)} × ${Number(item.quantity)||1}</span><span>${formatPrice(item.product.price * (Number(item.quantity)||1))}</span></div>`).join('')}<div><span>Subtotal</span><b>${formatPrice(subtotal)}</b></div><div><span>Ongkir</span><b id="shipping-cost">${formatPrice(shippingCost)}</b></div><div><span>Total</span><b id="payment-total">${formatPrice(total)}</b></div></div><form class="payment-form" id="payment-form"><h3>Detail pengiriman</h3><label>Nama penerima<input name="recipient" autocomplete="name" placeholder="Nama lengkap" value="${sellerEscape(state.paymentDraft?.recipient || '')}" required></label><label>Nomor telepon<input name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="08xxxxxxxxxx" value="${sellerEscape(state.paymentDraft?.phone || '')}" required></label><label>Alamat pengiriman<textarea name="address" autocomplete="street-address" rows="3" placeholder="Alamat lengkap" required>${sellerEscape(state.paymentDraft?.address || '')}</textarea></label><label>Layanan pengiriman<select name="shipping-method" id="shipping-method"><option value="regular" ${shippingMethod==='regular'?'selected':''}>Regular Service (REG) - ${formatPrice(shippingRates.regular)} / 1-3 hari</option><option value="express" ${shippingMethod==='express'?'selected':''}>Express / Next Day - ${formatPrice(shippingRates.express)}</option><option value="cargo" ${shippingMethod==='cargo'?'selected':''}>Cargo / Heavy Packages - ${formatPrice(shippingRates.cargo)}</option></select></label><h3>Pilih pembayaran</h3><label>Metode pembayaran<select name="payment-method" id="payment-method"><option value="Kartu debit/kredit" ${method==='Kartu debit/kredit'?'selected':''}>Kartu debit/kredit</option><option value="Transfer bank" ${method==='Transfer bank'?'selected':''}>Transfer bank</option><option value="COD" ${method==='COD'?'selected':''}>Bayar di tempat (COD)</option></select></label><div id="payment-method-fields">${method==='Kartu debit/kredit' ? `<p class="demo-note">SIMULASI DEMO — jangan masukkan kartu asli. Data kartu tidak disimpan.</p><label>Nama pemegang kartu<input name="card-holder" autocomplete="off" placeholder="Nama pada kartu" required></label><label>Nomor kartu<input name="card-number" inputmode="numeric" autocomplete="off" maxlength="23" placeholder="1234 5678 9012 3456" required></label><div class="payment-row"><label>Berlaku sampai (MM/YY)<input name="expiry" autocomplete="off" placeholder="MM/YY" maxlength="5" required></label><label>CVV / kode keamanan<input name="cvv" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="123" required></label></div>` : method==='Transfer bank' ? `<p class="demo-note">DEMO — instruksi virtual account akan dibuat setelah pesanan dikonfirmasi. Tidak ada transfer nyata.</p><label>Pilih bank<select name="bank"><option>BCA</option><option>BNI</option><option>BRI</option><option>Mandiri</option></select></label>` : `<p class="demo-note">Bayar saat pesanan tiba. Pastikan nama penerima, nomor telepon, dan alamat pengiriman sudah benar.</p><label class="cod-confirm"><input type="checkbox" name="cod-confirm" required> Saya mengonfirmasi alamat dan nomor telepon untuk pengiriman COD.</label>`}</div><button class="primary-button full" type="submit" id="payment-submit">${method==='COD'?'Konfirmasi pesanan COD':method==='Transfer bank'?'Konfirmasi & lihat instruksi':`Simulasikan pembayaran ${formatPrice(total)}`}</button></form></div>`;
+};
+function bindPaymentControls() {
+  const form = $('#payment-form');
+  const modal = $('#modal');
+  const methodSelect = $('#payment-method');
+  if (form && methodSelect) {
+    methodSelect.onchange = () => {
+      state.paymentDraft = { ...(state.paymentDraft || {}), paymentMethod: methodSelect.value };
+      // Re-render method-specific fields immediately; only non-sensitive delivery choices persist in memory.
+      const fd = new FormData(form);
+      state.paymentDraft.recipient = fd.get('recipient') || '';
+      state.paymentDraft.phone = fd.get('phone') || '';
+      state.paymentDraft.address = fd.get('address') || '';
+      state.paymentDraft.shippingMethod = fd.get('shipping-method') || 'regular';
+      state.paymentDraft.bank = fd.get('bank') || 'BCA';
+      renderModal();
+    };
+    const shippingSelect = $('#shipping-method');
+    if (shippingSelect) shippingSelect.onchange = () => {
+      state.paymentDraft = { ...(state.paymentDraft || {}), shippingMethod: shippingSelect.value, paymentMethod: methodSelect.value };
+      const fd = new FormData(form);
+      state.paymentDraft.recipient = fd.get('recipient') || '';
+      state.paymentDraft.phone = fd.get('phone') || '';
+      state.paymentDraft.address = fd.get('address') || '';
+      renderModal();
+    };
+    form.onsubmit = (event) => { event.preventDefault(); completePayment(form); };
+    const cardNumber = form.querySelector('[name="card-number"]');
+    if (cardNumber) cardNumber.oninput = () => { cardNumber.value = cardNumber.value.replace(/\\D/g,'').slice(0,19).replace(/(.{4})/g,'$1 ').trim(); };
+    const expiry = form.querySelector('[name="expiry"]');
+    if (expiry) expiry.oninput = () => { const v=expiry.value.replace(/\\D/g,'').slice(0,4); expiry.value=v.length>2 ? `${v.slice(0,2)}/${v.slice(2)}` : v; };
+    const cvv = form.querySelector('[name="cvv"]');
+    if (cvv) cvv.oninput = () => { cvv.value=cvv.value.replace(/\\D/g,'').slice(0,4); };
+  }
+  const back = modal.querySelector('[data-payment-back]');
+  if (back) back.onclick = () => {
+    if (state.paymentStage === 'confirmation' || state.paymentStage === 'bank-instructions') {
+      state.modal = null; renderModal(); setMobilePage('home');
+    } else {
+      state.modal = 'cart'; renderModal();
+    }
+  };
+  const copy = modal.querySelector('[data-copy-va]');
+  if (copy) copy.onclick = async () => { try { await navigator.clipboard.writeText(state.selectedOrder?.virtualAccount || ''); showToast('Nomor virtual account disalin'); } catch { showToast(`Nomor VA: ${state.selectedOrder?.virtualAccount || '-'}`); } };
+  const check = modal.querySelector('[data-check-payment-status]');
+  if (check) check.onclick = () => showToast(state.selectedOrder?.paymentStatus === 'Sudah dibayar' ? 'Pembayaran demo sudah dikonfirmasi.' : 'Status masih menunggu pembayaran.');
+  const demoPaid = modal.querySelector('[data-demo-bank-paid]');
+  if (demoPaid) demoPaid.onclick = () => {
+    const order = state.selectedOrder; if (!order || order.paymentMethod !== 'Transfer bank' || order.paymentStatus === 'Sudah dibayar') return;
+    order.paymentStatus = 'Sudah dibayar'; order.orderStatus = 'Menunggu pengiriman'; order.status = 'New';
+    save(`rewear-orders-${accountKey()}`, state.orders); saveSellerOrderStatuses(order);
+    state.paymentStage = 'confirmation'; renderModal(); showToast('Pembayaran demo ditandai berhasil; bukan verifikasi bank nyata.');
+  };
+  modal.querySelectorAll('[data-payment-finish]').forEach((button) => button.onclick = () => { state.modal = 'order-detail'; renderModal(); });
+}
+const saveSellerOrderStatuses = (order) => {
+  Object.keys(order?.sellerStatuses || {}).forEach(() => {});
+  Object.keys(order?.items ? Object.fromEntries(order.items.filter(i=>i.product.sellerId).map(i=>[i.product.sellerId,true])) : {}).forEach((sellerId) => {
+    const key=`rewear-seller-${sellerId}-orders`; const list=load(key,[]); const found=list.find(item=>item.id===order.id);
+    if(found){found.status=order.status;save(key,list);}
+  });
+};
+
+const orderDetailModal = () => { const order = state.selectedOrder; if (!order) return '<div class="modal narrow"><button class="close" data-close>X</button><p>Order details are unavailable.</p></div>'; return `<div class="modal narrow"><button class="close" data-close>X</button><span class="eyebrow">PESANAN</span><h2>Detail Pesanan</h2><p><b>${sellerEscape(order.id)}</b></p><div class="modal-body">${order.items.map((item) => `<div class="order-item"><span><b>${sellerEscape(item.product.name)}</b><small>${Number(item.quantity) || 1} × ${sellerEscape(item.product.brand)}</small></span><strong>${formatPrice(item.product.price * (Number(item.quantity) || 1))}</strong></div>`).join('')}<div class="payment-summary"><div><span>Status</span><b>${sellerEscape(order.orderStatus || order.status || 'New')}</b></div><div><span>Subtotal</span><b>${formatPrice(order.subtotal || order.total)}</b></div><div><span>Pengiriman</span><span>${sellerEscape(order.shippingMethod || 'Regular Service (REG)')}</span></div><div><span>Ongkir</span><span>${formatPrice(order.shippingCost || 0)}</span></div><div><span>Total</span><b>${formatPrice(order.total)}</b></div><div><span>Pembayaran</span><span>${sellerEscape(order.paymentMethod)}</span></div><div><span>Status pembayaran</span><span>${sellerEscape(order.paymentStatus || (order.status === 'New' ? 'Sudah dibayar' : 'Menunggu pembayaran'))}</span></div><div><span>Penerima</span><span>${sellerEscape(order.recipient)}</span></div><div><span>Alamat</span><span>${sellerEscape(order.address)}</span></div>${Object.entries(order.shipments || {}).map(([sellerId, shipment]) => `<div><span>Kurir (${sellerEscape(sellerId)})</span><span>${sellerEscape(shipment.courierName || '-')} · ${sellerEscape(shipment.trackingNumber || '-')} · ${sellerEscape(shipment.status || '-')}</span></div>`).join('')}</div>${sellerReviewSection(order)}<button class="primary-button full" data-close>Lanjut Belanja</button></div></div>`; };
 const accountModal = () => {
   const privacyTab = state.accountTab === 'privacy';
   const editing = state.accountEditing && !privacyTab;
