@@ -1276,7 +1276,21 @@ css.textContent = `#admin-root{display:none;position:fixed;inset:0;z-index:10050
 .adm-rep{display:flex;gap:8px;margin-top:10px}.adm-rep input{flex:1}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#c24c63;margin-left:6px}
 .adm-thumb{width:42px;height:42px;object-fit:cover;border-radius:6px;background:#ebe6e1}.adm-pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}.adm-pick label{display:flex;gap:8px;align-items:center;padding:8px;background:#f7f4f1;border-radius:8px}
 .no-results{grid-column:1/-1;text-align:center;padding:40px 10px;color:#7b7070}
-@media(max-width:760px){.adm-wrap{grid-template-columns:1fr}.adm-side{position:static;height:auto;flex-direction:row;overflow-x:auto;padding:10px}.adm-side h2{display:none}.adm-side button{white-space:nowrap}.adm-side .sp{display:none}.adm-main{padding:14px}.adm-chat{grid-template-columns:1fr}}`;
+@media(max-width:760px){
+.adm-wrap{display:flex;flex-direction:column;min-height:100%;width:100%;}
+.adm-side{position:sticky;top:0;z-index:5;display:flex;flex-direction:row;align-items:center;gap:8px;width:100%;height:auto;min-height:0;padding:10px 12px;overflow-x:auto;overflow-y:hidden;white-space:nowrap;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;}
+.adm-side h2{display:none;}
+.adm-side button{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:auto;min-width:max-content;min-height:42px;margin:0;padding:10px 13px;border-radius:8px;text-align:center;white-space:nowrap;line-height:1.2;font-size:13px;}
+.adm-side button.on{background:#fff;color:#4a1420;font-weight:700;box-shadow:0 1px 3px #0002;}
+.adm-side .sp{display:none;}
+.adm-side button[data-a="logout"]{margin-left:4px;}
+.adm-main{width:100%;min-width:0;padding:14px;}
+.adm-chat{grid-template-columns:minmax(0,1fr);}
+.adm-cards{grid-template-columns:repeat(2,minmax(0,1fr));}
+.adm-main h1{font-size:20px;}
+}
+@media(max-width:360px){.adm-side{gap:6px;padding:8px}.adm-side button{min-height:40px;padding:9px 10px;font-size:12px}.adm-main{padding:11px}.adm-cards{gap:8px}.adm-card,.adm-box{padding:12px}}
+`;
 document.head.appendChild(css);
 const root = document.createElement('div'); root.id = 'admin-root'; document.body.appendChild(root);
 let tab = 'dash', ordF = 'All', ordQ = '', selChat = null;
