@@ -426,6 +426,7 @@
     </style>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script>
 const firebaseConfig = {
   apiKey: "AIzaSyBORVA6Mb_l24POsHmQscEO8I0bgyE2MWs",
@@ -438,6 +439,8 @@ const firebaseConfig = {
 
 const firebaseApp = typeof firebase !== 'undefined' ? firebase.initializeApp(firebaseConfig) : null;
 const firebaseAuth = firebaseApp ? firebase.auth() : null;
+const firebaseDb = firebaseApp && firebase.firestore ? firebase.firestore() : null;
+const REWEAR_ADMIN_EMAIL = 'rewearofficials@gmail.com';
 const firebaseAuthErrorMessage = (error) => ({
   'auth/invalid-email': 'Please enter a valid email address.',
   'auth/user-disabled': 'This account has been disabled.',
@@ -519,6 +522,39 @@ const loadCurrentUser = () => { const user = load('rewear-user', null); if (user
 const $ = (selector) => document.querySelector(selector);
 const state = { user: loadCurrentUser(), cart: [], orders: [], favorites: [], chat: [], modal: null, selectedProduct: null, selectedStore: null, activeRoom: 'helper', mobileChatView: 'inbox', authMode: 'login', authIntent: 'buyer', sellerPage: 'dashboard', editingSellerProduct: null, accountEditing: false, mobileMenuOpen: false, mobileMenuReturnFocus: null, category: 'Semua', condition: 'Semua Kondisi', search: '', sort: 'Terbaru' };
 const accountKey = () => state.user ? state.user.email.toLowerCase() : 'guest';
+let customerChatUnsubscribe = null;
+let customerChatUid = null;
+const customerConversationRef = (uid) => firebaseDb.collection('conversations').doc(uid);
+const startCustomerChatSync = () => {
+  const fbUser = firebaseAuth && firebaseAuth.currentUser;
+  if (!firebaseDb || !fbUser || !state.user || String(fbUser.email || '').toLowerCase() === REWEAR_ADMIN_EMAIL) return;
+  if (customerChatUid === fbUser.uid && customerChatUnsubscribe) return;
+  if (customerChatUnsubscribe) customerChatUnsubscribe();
+  customerChatUid = fbUser.uid;
+  const ref = customerConversationRef(fbUser.uid);
+  ref.set({ ownerUid: fbUser.uid, ownerEmail: String(fbUser.email || '').toLowerCase(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }).catch((error) => console.error('Could not initialize customer chat:', error));
+  customerChatUnsubscribe = ref.collection('messages').orderBy('createdAt').onSnapshot((snapshot) => {
+    const messages = snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return { sender: data.sender === 'customer' ? 'user' : 'other', text: String(data.text || ''), createdAt: data.createdAt && data.createdAt.toMillis ? data.createdAt.toMillis() : Date.now() };
+    });
+    let helper = state.chat.find((item) => item.room === 'helper');
+    if (!helper) { helper = { room: 'helper', name: 'Rewear Helper', messages: [] }; state.chat.push(helper); }
+    helper.messages = messages.length ? messages : [{ sender: 'other', text: 'Halo! Ada yang bisa kami bantu?' }];
+    save(`rewear-chat-${accountKey()}`, state.chat);
+    if (state.modal === 'chat') renderModal();
+  }, (error) => { console.error('Customer chat sync failed:', error); showToast('Chat gagal tersambung. Periksa konfigurasi Firestore.'); });
+};
+const sendCustomerChatMessage = async (text) => {
+  const fbUser = firebaseAuth && firebaseAuth.currentUser;
+  const clean = String(text || '').trim();
+  if (!firebaseDb || !fbUser || !clean) { showToast('Silakan masuk kembali untuk mengirim pesan.'); return; }
+  const ref = customerConversationRef(fbUser.uid);
+  try {
+    await ref.set({ ownerUid: fbUser.uid, ownerEmail: String(fbUser.email || '').toLowerCase(), lastMessage: clean, lastSender: 'customer', updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    await ref.collection('messages').add({ sender: 'customer', text: clean, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+  } catch (error) { console.error('Customer message send failed:', error); showToast('Pesan belum terkirim. Periksa Firestore dan koneksi internet.'); }
+};
 const hydrateAccount = () => { const key = accountKey(); state.cart = load(`rewear-cart-${key}`, []); state.orders = load(`rewear-orders-${key}`, []); state.favorites = load(`rewear-favorites-${key}`, []); state.chat = load(`rewear-chat-${key}`, [{ room: 'helper', name: 'Rewear Helper', messages: [{ sender: 'other', text: 'Halo! Ada yang bisa kami bantu?' }] }, { room: 'store', name: storeName, messages: [{ sender: 'other', text: `Halo! Selamat datang di ${storeName}. Ada yang ingin ditanyakan?` }] }]); };
 const formatPrice = (value) => `Rp${value.toLocaleString('id-ID')}`;
 const discount = (product) => Math.round((1 - product.price / product.originalPrice) * 100);
@@ -540,7 +576,7 @@ const requireLogin = (action) => {
   }
   action();
 };
-const setUser = (user) => { state.user = { ...user, name: getProfileName(user) }; save('rewear-user', state.user); hydrateAccount(); state.modal = null; render(); renderModal(); };
+const setUser = (user) => { state.user = { ...user, name: getProfileName(user) }; save('rewear-user', state.user); hydrateAccount(); state.modal = null; render(); renderModal(); startCustomerChatSync(); };
 const updateAuthHeader = () => { const loginButton = $('#login-button'); const registerButton = $('#register-button'); if (!loginButton || !registerButton) return; if (state.user) { loginButton.textContent = getProfileName(state.user); loginButton.classList.add('user-name'); loginButton.disabled = false; loginButton.onclick = () => openAccount(); registerButton.hidden = true; } else { loginButton.textContent = 'Masuk'; loginButton.classList.remove('user-name'); loginButton.disabled = false; loginButton.onclick = () => openAuth('login'); registerButton.hidden = false; } };
 const renderMobileMenu = () => {
   const name = $('#mobile-profile-name');
@@ -770,7 +806,7 @@ const saveAccountInformation = async (form) => {
     showToast(firebaseAuthErrorMessage(error));
   }
 };
-const logout = async () => { let signOutFailed = false; try { if (firebaseAuth) await firebaseAuth.signOut(); } catch (error) { signOutFailed = true; console.error('Firebase sign-out failed:', error); } state.user = null; localStorage.removeItem('rewear-user'); state.modal = null; state.selectedOrder = null; state.accountTab = 'details'; hydrateAccount(); render(); renderModal(); showToast(signOutFailed ? 'Local logout completed, but Firebase sign-out failed.' : 'Kamu sudah keluar'); };
+const logout = async () => { let signOutFailed = false; if (customerChatUnsubscribe) customerChatUnsubscribe(); customerChatUnsubscribe = null; customerChatUid = null; try { if (firebaseAuth) await firebaseAuth.signOut(); } catch (error) { signOutFailed = true; console.error('Firebase sign-out failed:', error); } state.user = null; localStorage.removeItem('rewear-user'); state.modal = null; state.selectedOrder = null; state.accountTab = 'details'; hydrateAccount(); render(); renderModal(); showToast(signOutFailed ? 'Local logout completed, but Firebase sign-out failed.' : 'Kamu sudah keluar'); };
 const card = (product) => { const id = String(product.id); const favorite = state.favorites.some((item) => String(item) === id); return `<article class="product-card"><button class="product-image" data-product="${sellerEscape(id)}"><img src="${sellerEscape(product.image)}" alt="${sellerEscape(product.name)}"><span class="ribbon ${product.ribbon === 'Hot Offer' ? 'orange' : product.ribbon === 'Murah' ? 'sky' : ''}">${sellerEscape(product.ribbon || 'Baru')}</span><span class="discount">-${discount(product)}%</span></button><button class="heart ${favorite ? 'active' : ''}" data-favorite="${sellerEscape(id)}">${favorite ? '&#9829;' : '&#9825;'}</button><div class="product-info"><strong class="brand">${sellerEscape(product.brand)}</strong><h3>${sellerEscape(product.name)}</h3><button class="store-link" data-store="${sellerEscape(product.sellerName || storeName)}">Dijual oleh ${sellerEscape(product.sellerName || storeName)}</button><div class="price-row"><b>${formatPrice(product.price)}</b><del>${formatPrice(product.originalPrice)}</del></div><div class="meta">${sellerEscape(product.size)} <span>-</span> ${sellerEscape(product.condition)}</div><small>${sellerEscape(product.location)} 🏠︎ ${Number(product.viewed) || 0} Dilihat</small></div><button class="quick-add" data-add="${sellerEscape(id)}">+ Keranjang</button></article>`; };
 const setMobilePage = (page, options = {}) => {
   const allowed = ['home', 'flash', 'products', 'chat', 'chatroom', 'profile', 'payment'];
@@ -995,7 +1031,7 @@ if (form) form.onsubmit = async (event) => {
     showToast(firebaseAuthErrorMessage(error));
   }
 };
-const google = modal.querySelector('[data-google]'); if (google) google.onclick = () => state.authIntent === 'seller' ? showToast('Seller accounts must use the registered seller email and password.') : signInWithGoogle(); const detail = modal.querySelector('[data-detail-add]'); if (detail) detail.onclick = () => requireLogin(() => addToCart(state.selectedProduct)); modal.querySelectorAll('[data-cart-delete]').forEach((button) => button.onclick = () => removeFromCart(Number(button.dataset.cartDelete))); const checkoutButton = modal.querySelector('[data-checkout]'); if (checkoutButton) checkoutButton.onclick = checkout; const paymentForm = modal.querySelector('#payment-form'); if (paymentForm) paymentForm.onsubmit = (event) => { event.preventDefault(); completePayment(paymentForm); }; modal.querySelectorAll('[data-room]').forEach((button) => button.onclick = () => { state.activeRoom = button.dataset.room; if (window.matchMedia('(max-width: 680px)').matches) { state.mobileChatView = 'room'; setMobilePage('chatroom'); } renderModal(); }); const backToChatList = modal.querySelector('[data-chat-back]'); if (backToChatList) backToChatList.onclick = () => { state.mobileChatView = 'inbox'; setMobilePage('chat'); renderModal(); }; const chatForm = modal.querySelector('#chat-form'); if (chatForm) chatForm.onsubmit = (event) => { event.preventDefault(); const data = new FormData(chatForm); const room = state.chat.find((item) => item.room === (state.activeRoom || 'helper')); room.messages.push({ sender: 'user', text: data.get('text') }); save(`rewear-chat-${accountKey()}`, state.chat); renderModal(); }; modal.querySelectorAll('[data-product]').forEach((button) => button.onclick = () => openProduct(products.find((product) => String(product.id) === button.dataset.product))); modal.querySelectorAll('[data-store]').forEach((button) => button.onclick = () => openStore(button.dataset.store)); modal.querySelectorAll('[data-add]').forEach((button) => button.onclick = () => addToCart(products.find((product) => String(product.id) === button.dataset.add))); }
+const google = modal.querySelector('[data-google]'); if (google) google.onclick = () => state.authIntent === 'seller' ? showToast('Seller accounts must use the registered seller email and password.') : signInWithGoogle(); const detail = modal.querySelector('[data-detail-add]'); if (detail) detail.onclick = () => requireLogin(() => addToCart(state.selectedProduct)); modal.querySelectorAll('[data-cart-delete]').forEach((button) => button.onclick = () => removeFromCart(Number(button.dataset.cartDelete))); const checkoutButton = modal.querySelector('[data-checkout]'); if (checkoutButton) checkoutButton.onclick = checkout; const paymentForm = modal.querySelector('#payment-form'); if (paymentForm) paymentForm.onsubmit = (event) => { event.preventDefault(); completePayment(paymentForm); }; modal.querySelectorAll('[data-room]').forEach((button) => button.onclick = () => { state.activeRoom = button.dataset.room; if (window.matchMedia('(max-width: 680px)').matches) { state.mobileChatView = 'room'; setMobilePage('chatroom'); } renderModal(); }); const backToChatList = modal.querySelector('[data-chat-back]'); if (backToChatList) backToChatList.onclick = () => { state.mobileChatView = 'inbox'; setMobilePage('chat'); renderModal(); }; const chatForm = modal.querySelector('#chat-form'); if (chatForm) chatForm.onsubmit = (event) => { event.preventDefault(); const data = new FormData(chatForm); const text = String(data.get('text') || '').trim(); if (!text) return; if ((state.activeRoom || 'helper') === 'helper' && firebaseDb) { const input = chatForm.querySelector('[name="text"]'); if (input) input.value = ''; void sendCustomerChatMessage(text); return; } const room = state.chat.find((item) => item.room === (state.activeRoom || 'helper')); if (room) room.messages.push({ sender: 'user', text }); save(`rewear-chat-${accountKey()}`, state.chat); renderModal(); }; modal.querySelectorAll('[data-product]').forEach((button) => button.onclick = () => openProduct(products.find((product) => String(product.id) === button.dataset.product))); modal.querySelectorAll('[data-store]').forEach((button) => button.onclick = () => openStore(button.dataset.store)); modal.querySelectorAll('[data-add]').forEach((button) => button.onclick = () => addToCart(products.find((product) => String(product.id) === button.dataset.add))); }
 $('#search').oninput = (event) => { state.search = event.target.value; render(); }; $('#search-button').onclick = () => { setMobilePage('products'); document.getElementById('products').scrollIntoView({ behavior: 'auto' }); $('#search').focus(); }; $('#sort').onchange = (event) => { state.sort = event.target.value; render(); }; $('#category-list').onclick = (event) => { if (event.target.matches('[data-category]')) { state.category = event.target.dataset.category; render(); setMobilePage('products'); document.getElementById('products').scrollIntoView({ behavior: 'auto' }); } }; $('#condition-list').onclick = (event) => { if (event.target.matches('[data-condition]')) { state.condition = event.target.dataset.condition; render(); } }; $('#chat-button').onclick = () => requireLogin(() => { state.modal = 'chat'; state.activeRoom = 'helper'; renderModal(); }); $('#cart-button').onclick = () => requireLogin(() => { state.modal = 'cart'; renderModal(); }); $('#login-button').onclick = () => { state.modal = 'auth'; state.authMode = 'login'; renderModal(); }; $('#register-button').onclick = () => { state.modal = 'auth'; state.authMode = 'register'; renderModal(); }; $('#seller-button').onclick = () => { state.modal = 'auth'; state.authMode = 'seller-register'; renderModal(); };
 const sellerOwnerId = (email = state.user?.email || state.user?.name || '') => String(email).trim().toLowerCase();
 const sellerRoleKey = (email) => `rewear-seller-role-${sellerOwnerId(email)}`;
@@ -1199,7 +1235,9 @@ const bindBottomNavigation = () => {
   });
 };
 if (firebaseAuth) firebaseAuth.onAuthStateChanged(async (firebaseUser) => {
-  if (!firebaseUser || !state.user || state.user.email !== (firebaseUser.email || firebaseUser.uid)) return;
+  if (firebaseUser && String(firebaseUser.email || '').toLowerCase() === REWEAR_ADMIN_EMAIL && typeof window.rewearAdminAuthReady === 'function') window.rewearAdminAuthReady(firebaseUser);
+  if (!firebaseUser || !state.user || String(state.user.email || '').toLowerCase() !== String(firebaseUser.email || firebaseUser.uid).toLowerCase()) return;
+  startCustomerChatSync();
   const isAdmin = await hasFirebaseAdminClaim(firebaseUser);
   const isSeller = localStorage.getItem(sellerRoleKey(firebaseUser.email || firebaseUser.uid)) === 'seller';
   const role = isAdmin ? 'admin' : isSeller ? 'seller' : 'buyer';
@@ -1225,7 +1263,12 @@ hydrateAccount(); render();
   <script>
 /* ===== REWEAR ADMIN ADD-ON (added; original code untouched except small hooks) ===== */
 (() => {
-const ADMIN = { email: 'rewearofficials@gmail.com', pass: 'rewear123' };
+const ADMIN = { email: 'rewearofficials@gmail.com' };
+let remoteConversations = [];
+let adminMessagesUnsubscribe = null;
+let adminMessagesUid = null;
+let remoteAdminMessages = [];
+let adminConversationsUnsubscribe = null;
 const K = { sus: 'rewear-admin-suspended', hid: 'rewear-admin-hidden', flash: 'rewear-admin-flash', ann: 'rewear-admin-announcement', read: 'rewear-admin-chat-read' };
 const ls = (k, f) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : f; } catch { return f; } };
 const ss = (k, v) => localStorage.setItem(k, JSON.stringify(v));
@@ -1243,7 +1286,7 @@ const allOrders = () => keys('rewear-orders-').flatMap((k) => arr(ls(k, [])).map
 const emails = () => { const s = new Set(); ['rewear-cart-', 'rewear-orders-', 'rewear-favorites-', 'rewear-chat-', 'rewear-seller-role-'].forEach((p) => keys(p).forEach((k) => s.add(k.slice(p.length)))); const u = ls('rewear-user', null); if (u && u.email) s.add(String(u.email).toLowerCase()); s.delete('guest'); return [...s].sort(); };
 const sellerListings = () => keys('rewear-seller-').filter((k) => k.endsWith('-products')).flatMap((k) => { const o = k.slice(14, -9); return arr(ls(k, [])).map((p) => ({ ...p, _k: k, _owner: o, _id: `seller:${o}:${p.id}` })); });
 const reviews = () => keys('rewear-seller-').filter((k) => k.endsWith('-reviews')).flatMap((k) => arr(ls(k, [])).map((r) => ({ ...r, _k: k })));
-const chats = () => keys('rewear-chat-').map((k) => { const e = k.slice(12); const r = arr(ls(k, [])).find((x) => x.room === 'helper'); const m = (r && r.messages) || []; if (!m.some((x) => x.sender === 'user')) return null; const rd = ls(K.read, {})[e] || 0; return { e, k, m, unread: m[m.length - 1].sender === 'user' && m.length > rd }; }).filter(Boolean).sort((a, b) => b.unread - a.unread);
+const chats = () => { if (firebaseDb && isAdmin()) return remoteConversations.filter((x) => x.lastMessage).map((x) => ({ uid: x.uid, e: x.ownerEmail || x.uid, m: [{ sender: x.lastSender === 'customer' ? 'user' : 'other', text: x.lastMessage || '' }], unread: x.lastSender === 'customer' })); return keys('rewear-chat-').map((k) => { const e = k.slice(12); const r = arr(ls(k, [])).find((x) => x.room === 'helper'); const m = (r && r.messages) || []; if (!m.some((x) => x.sender === 'user')) return null; const rd = ls(K.read, {})[e] || 0; return { e, k, m, unread: m[m.length - 1].sender === 'user' && m.length > rd }; }).filter(Boolean).sort((a, b) => b.unread - a.unread); };
 const hidden = () => ls(K.hid, []).map(String);
 window.adminHidden = (p) => hidden().includes(String(p.id));
 window.adminFlash = (list) => { const ids = ls(K.flash, []).map(String); const sel = ids.length ? list.filter((p) => ids.includes(String(p.id))) : []; return sel.length ? sel : list.slice(0, 4); };
@@ -1317,11 +1360,12 @@ const vOrders = () => {
   <div class="adm-box">${tbl(['ID', 'Pembeli', 'Item', 'Total', 'Bayar', 'Tanggal', 'Status'], o.map((x) => `<tr><td><b>${E(x.id)}</b></td><td>${E(x._e)}<br><small>${E(x.recipient)} · ${E(x.phone)}<br>${E(x.address)}</small></td><td>${itemsOf(x)}</td><td>${rp(x.total)}</td><td>${E(x.paymentMethod)}<br><small>${E(x.paymentStatus)}</small></td><td>${dt(x.createdAt)}</td><td><select data-sel="${E(x.id)}">${STAT.map((s) => `<option ${s === x.status ? 'selected' : ''}>${s}</option>`).join('')}</select><br><button class="adm-btn" style="margin-top:6px" data-a="ost" data-k="${E(x._k)}" data-id="${E(x.id)}">Simpan</button></td></tr>`))}</div>`;
 };
 const vChat = () => {
-  const list = chats(); if (!selChat && list[0]) selChat = list[0].e;
-  const c = list.find((x) => x.e === selChat);
-  if (c) { const rd = ls(K.read, {}); if (rd[c.e] !== c.m.length) { rd[c.e] = c.m.length; ss(K.read, rd); } }
-  return `<h1>Chat Pelanggan</h1><div class="adm-chat"><div class="adm-clist">${list.map((x) => `<button class="${x.e === selChat ? 'on' : ''}" data-a="selchat" data-e="${E(x.e)}"><b>${E(x.e)}</b>${x.unread && x.e !== selChat ? '<span class="dot"></span>' : ''}<br><small>${E(String(x.m[x.m.length - 1].text).slice(0, 40))}</small></button>`).join('') || '<div class="adm-box">Belum ada pelanggan yang chat.</div>'}</div>
-  <div>${c ? `<div class="adm-box" style="margin:0"><h3>${E(c.e)}</h3><div class="adm-msgs">${c.m.map((m) => `<div class="adm-m ${m.sender === 'user' ? '' : 'me'}">${E(m.text)}</div>`).join('')}</div><div class="adm-rep"><input id="adm-reply" placeholder="Tulis balasan untuk pelanggan..."><button class="adm-btn" data-a="send">Kirim</button></div></div>` : ''}</div></div>`;
+  const list = chats(); if (!selChat && list[0]) selChat = list[0].uid || list[0].e;
+  const c = list.find((x) => (x.uid || x.e) === selChat);
+  if (c && !c.uid) { const rd = ls(K.read, {}); if (rd[c.e] !== c.m.length) { rd[c.e] = c.m.length; ss(K.read, rd); } }
+  const messages = c && c.uid && firebaseDb ? remoteAdminMessages : (c ? c.m : []);
+  return `<h1>Chat Pelanggan</h1><div class="adm-chat"><div class="adm-clist">${list.map((x) => `<button class="${(x.uid || x.e) === selChat ? 'on' : ''}" data-a="selchat" data-e="${E(x.uid || x.e)}"><b>${E(x.e)}</b>${x.unread && (x.uid || x.e) !== selChat ? '<span class="dot"></span>' : ''}<br><small>${E(String((x.m[x.m.length - 1] || {}).text || '').slice(0, 40))}</small></button>`).join('') || '<div class="adm-box">Belum ada pelanggan yang chat.</div>'}</div>
+  <div>${c ? `<div class="adm-box" style="margin:0"><h3>${E(c.e)}</h3><div class="adm-msgs">${messages.map((m) => `<div class="adm-m ${m.sender === 'user' ? '' : 'me'}">${E(m.text)}</div>`).join('')}</div><div class="adm-rep"><input id="adm-reply" placeholder="Tulis balasan untuk pelanggan..."><button class="adm-btn" data-a="send">Kirim</button></div></div>` : ''}</div></div>`;
 };
 const vUsers = () => {
   const sus = ls(K.sus, []), o = allOrders();
@@ -1346,8 +1390,47 @@ const paint = () => {
   if (id) { const n = root.querySelector('#' + id); if (n) { if (v !== undefined && n.tagName !== 'SELECT') n.value = v; n.focus(); try { n.setSelectionRange(s, s); } catch {} } }
   const m = root.querySelector('.adm-msgs'); if (m) m.scrollTop = m.scrollHeight;
 };
-const openAdmin = () => { root.classList.add('open'); document.body.style.overflow = 'hidden'; paint(); };
+const openAdmin = () => { root.classList.add('open'); document.body.style.overflow = 'hidden'; paint(); startAdminChatSync(); if (selChat) watchAdminMessages(selChat); };
 const closeAdmin = () => { root.classList.remove('open'); document.body.style.overflow = ''; };
+const watchAdminMessages = (uid) => {
+  if (!firebaseDb || !uid) return;
+  if (adminMessagesUid === uid && adminMessagesUnsubscribe) return;
+  if (adminMessagesUnsubscribe) adminMessagesUnsubscribe();
+  adminMessagesUid = uid; remoteAdminMessages = [];
+  adminMessagesUnsubscribe = firebaseDb.collection('conversations').doc(uid).collection('messages').orderBy('createdAt').onSnapshot((snapshot) => {
+    remoteAdminMessages = snapshot.docs.map((doc) => { const d = doc.data(); return { sender: d.sender === 'customer' ? 'user' : 'other', text: String(d.text || ''), createdAt: d.createdAt && d.createdAt.toMillis ? d.createdAt.toMillis() : Date.now() }; });
+    if (root.classList.contains('open') && tab === 'chat') paint();
+  }, (error) => { console.error('Admin message listener failed:', error); toast('Gagal memuat pesan Firestore. Periksa Firestore Rules.'); });
+};
+const startAdminChatSync = () => {
+  const fbUser = firebaseAuth && firebaseAuth.currentUser;
+  if (!firebaseDb || !isAdmin() || !fbUser || String(fbUser.email || '').toLowerCase() !== ADMIN.email) return;
+  if (adminConversationsUnsubscribe) return;
+  adminConversationsUnsubscribe = firebaseDb.collection('conversations').onSnapshot((snapshot) => {
+    remoteConversations = snapshot.docs.map((doc) => ({ uid: doc.id, ...doc.data() })).sort((a, b) => {
+      const at = a.updatedAt && a.updatedAt.toMillis ? a.updatedAt.toMillis() : 0;
+      const bt = b.updatedAt && b.updatedAt.toMillis ? b.updatedAt.toMillis() : 0;
+      return bt - at;
+    });
+    const list = chats();
+    if (!selChat && list[0]) selChat = list[0].uid || list[0].e;
+    if (selChat && remoteConversations.some((x) => x.uid === selChat)) watchAdminMessages(selChat);
+    if (root.classList.contains('open')) paint();
+  }, (error) => { console.error('Admin conversation listener failed:', error); toast('Gagal memuat daftar chat. Periksa Firestore Rules.'); });
+};
+window.rewearAdminAuthReady = () => { if (isAdmin()) startAdminChatSync(); };
+const stopAdminChatSync = () => { if (adminConversationsUnsubscribe) adminConversationsUnsubscribe(); if (adminMessagesUnsubscribe) adminMessagesUnsubscribe(); adminConversationsUnsubscribe = null; adminMessagesUnsubscribe = null; adminMessagesUid = null; remoteAdminMessages = []; remoteConversations = []; };
+const sendAdminChatMessage = async (uid, text) => {
+  const fbUser = firebaseAuth && firebaseAuth.currentUser;
+  if (!firebaseDb || !fbUser || String(fbUser.email || '').toLowerCase() !== ADMIN.email) { toast('Silakan masuk sebagai admin melalui Firebase Authentication.'); return; }
+  const clean = String(text || '').trim(); if (!clean) return;
+  const ref = firebaseDb.collection('conversations').doc(uid);
+  try {
+    await ref.set({ lastMessage: clean, lastSender: 'admin', updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    await ref.collection('messages').add({ sender: 'admin', text: clean, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    toast('Balasan terkirim.');
+  } catch (error) { console.error('Admin reply failed:', error); toast('Balasan gagal dikirim. Periksa Firestore Rules.'); }
+};
 
 /* ---------- actions ---------- */
 const setStatus = (key, id, st) => {
@@ -1362,10 +1445,10 @@ root.addEventListener('click', (e) => {
   const b = e.target.closest('[data-a]'); if (!b || b.tagName === 'SELECT') return;
   const a = b.dataset.a, d = b.dataset;
   if (a === 'tab') { tab = d.t; }
-  else if (a === 'logout') { sessionStorage.removeItem('rewear-admin-session'); closeAdmin(); history.replaceState(null, '', location.pathname + location.search); render(); toast('Admin berhasil keluar.'); return; }
+  else if (a === 'logout') { sessionStorage.removeItem('rewear-admin-session'); stopAdminChatSync(); closeAdmin(); if (firebaseAuth && String((firebaseAuth.currentUser && firebaseAuth.currentUser.email) || '').toLowerCase() === ADMIN.email) firebaseAuth.signOut().catch((error) => console.error('Admin sign-out failed:', error)); history.replaceState(null, '', location.pathname + location.search); render(); toast('Admin berhasil keluar.'); return; }
   else if (a === 'ost') { const s = root.querySelector(`[data-sel="${CSS.escape(d.id)}"]`); setStatus(d.k, d.id, s.value); toast('Status pesanan diperbarui.'); }
-  else if (a === 'selchat') { selChat = d.e; }
-  else if (a === 'send') { const i = root.querySelector('#adm-reply'), t = i.value.trim(); if (!t) return; const k = 'rewear-chat-' + selChat; const rooms = arr(ls(k, [])); let r = rooms.find((x) => x.room === 'helper'); if (!r) { r = { room: 'helper', name: 'Rewear Helper', messages: [] }; rooms.push(r); } r.messages.push({ sender: 'other', text: t, createdAt: Date.now() }); ss(k, rooms); i.value = ''; toast('Balasan terkirim.'); }
+  else if (a === 'selchat') { selChat = d.e; if (remoteConversations.some((x) => x.uid === selChat)) watchAdminMessages(selChat); else remoteAdminMessages = []; }
+  else if (a === 'send') { const i = root.querySelector('#adm-reply'), t = i.value.trim(); if (!t) return; if (firebaseDb && remoteConversations.some((x) => x.uid === selChat)) { i.value = ''; void sendAdminChatMessage(selChat, t); } else { const k = 'rewear-chat-' + selChat; const rooms = arr(ls(k, [])); let r = rooms.find((x) => x.room === 'helper'); if (!r) { r = { room: 'helper', name: 'Rewear Helper', messages: [] }; rooms.push(r); } r.messages.push({ sender: 'other', text: t, createdAt: Date.now() }); ss(k, rooms); i.value = ''; toast('Balasan tersimpan lokal; akun ini belum tersambung ke Firestore.'); } }
   else if (a === 'sus') { let s = ls(K.sus, []); s = s.includes(d.e) ? s.filter((x) => x !== d.e) : [...s, d.e]; ss(K.sus, s); }
   else if (a === 'hide') { let h = hidden(); h = h.includes(d.id) ? h.filter((x) => x !== d.id) : [...h, d.id]; ss(K.hid, h); render(); }
   else if (a === 'del') { if (!confirm('Hapus produk ini secara permanen?')) return; ss(d.k, arr(ls(d.k, [])).filter((p) => String(p.id) !== d.pid)); render(); }
@@ -1386,7 +1469,27 @@ document.addEventListener('submit', (e) => {
   const fd = new FormData(f), em = String(fd.get('email') || '').trim().toLowerCase(), pw = String(fd.get('password') || '');
   if (em === ADMIN.email) {
     e.preventDefault(); e.stopPropagation();
-    if (pw === ADMIN.pass) { sessionStorage.setItem('rewear-admin-session', '1'); closeModal(); render(); openAdmin(); } else toast('Email atau password admin salah.');
+    if (!firebaseAuth) { toast('Firebase Authentication belum tersedia.'); return; }
+    firebaseAuth.signInWithEmailAndPassword(em, pw).then(async (credential) => {
+      if (String(credential.user.email || '').toLowerCase() !== ADMIN.email) {
+        await firebaseAuth.signOut();
+        throw new Error('Akun admin tidak valid.');
+      }
+      if (!credential.user.emailVerified) {
+        try {
+          await credential.user.sendEmailVerification();
+        } finally {
+          await firebaseAuth.signOut();
+        }
+        toast('Email admin belum diverifikasi. Kami mengirim tautan verifikasi ke email admin. Buka tautan tersebut, lalu masuk kembali.');
+        return;
+      }
+      sessionStorage.setItem('rewear-admin-session', '1');
+      closeModal(); render(); openAdmin(); startAdminChatSync();
+    }).catch((error) => {
+      console.error('Admin Firebase sign-in failed:', error);
+      toast(error.code === 'auth/user-not-found' ? 'Buat akun admin terlebih dahulu di Firebase Authentication.' : (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' ? 'Login admin gagal. Periksa email dan password Firebase.' : (error.message || 'Login admin gagal. Periksa konfigurasi Firebase.')));
+    });
     return;
   }
   if (ls(K.sus, []).includes(em)) { e.preventDefault(); e.stopPropagation(); toast('Akun ini disuspend oleh admin.'); }
