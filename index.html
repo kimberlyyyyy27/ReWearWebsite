@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="id">
   <head>
+<script>if (location.hostname === '127.0.0.1') location.replace(location.href.replace('127.0.0.1', 'localhost')); /* Firebase Google login only allows localhost */</script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>REWEAR Preloved Fashion Marketplace</title>
@@ -10,10 +11,10 @@
       <div class="header-main container">
         <button class="logo" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">RE<span class="circle-logo"></span>WEAR</button>
         <button class="mobile-menu-button" id="mobile-menu-button" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu"><span aria-hidden="true">☰</span></button>
-        <div class="search-box"><input id="search" placeholder="Cari baju, tas, sepatu preloved..."><button id="search-button">🔎︎</button></div>
+        <div class="search-box"><input id="search" placeholder="Cari baju, dress, tas preloved..."><button id="search-button">🔎︎</button></div>
         <div class="header-actions"><button class="icon-button" id="cart-button" aria-label="Buka keranjang" title="Keranjang"><span class="cart-button-icon" aria-hidden="true">🛒</span><span class="cart-button-label">Keranjang</span></button><button class="icon-button" id="chat-button" aria-label="Buka chatroom" title="Chatroom">✉︎ Chat</button><button class="auth-link" id="login-button" type="button" onclick="openAuth('login')">Masuk</button><button class="auth-link filled" id="register-button" type="button" onclick="openAuth('register')">Daftar</button></div>
       </div>
-      <nav class="header-nav container"><span>⌯⌲ Kirim ke <b>Jakarta Selatan</b></span><button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Semua Produk</button><button onclick="document.getElementById('flash-sale').scrollIntoView({behavior:'smooth'})">🔥 Flash Sale</button><button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Baru Masuk</button><button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Wanita</button><button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Pria</button></nav>
+      <nav class="header-nav container"><span>⌯⌲ Kirim ke <b>Jakarta Selatan</b></span><button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Semua Produk</button><button onclick="document.getElementById('flash-sale').scrollIntoView({behavior:'smooth'})">🔥 Flash Sale</button><button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Baru Masuk</button></nav>
     </header>
     <div class="mobile-menu-backdrop hidden" id="mobile-menu-backdrop">
       <aside class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="REWEAR navigation" tabindex="-1">
@@ -65,6 +66,52 @@
       <section id="products"><div class="section-heading"><div><h2>Semua Produk</h2><p id="product-count">10 produk ditemukan</p></div><select id="sort"><option>Terbaru</option><option>Harga Terendah</option><option>Harga Tertinggi</option></select></div><div class="condition-list" id="condition-list"><button class="condition-pill active" data-condition="Semua Kondisi">Semua Kondisi</button><button class="condition-pill" data-condition="Like New">Like New</button><button class="condition-pill" data-condition="Very Good">Very Good</button><button class="condition-pill" data-condition="Good">Good</button><button class="condition-pill" data-condition="Fair">Fair</button></div><div class="product-grid" id="products-grid"></div></section>
       <section class="sell-cta"><img src="https://i.ebayimg.com/images/g/pcwAAeSw2Adqaj4R/s-l1600.jpg" alt="Fashion preloved"><div><span class="eyebrow">JUAL BAJU KAMU</span><h2>Lemari penuh? Jual di sini!</h2><p>Gratis upload dan kamu dapat hingga 70% dari harga jual.</p><button class="primary-button" id="seller-button" type="button" onclick="openAuth('seller')">Masuk sebagai Seller</button></div></section>
     </main>
+    <footer class="desktop-marketplace-footer" aria-label="Informasi REWEAR">
+      <div class="container desktop-footer-columns">
+        <section class="desktop-footer-column">
+          <h3>Belanja</h3>
+          <a href="#products">Semua Produk</a>
+          <a href="#products">Kategori</a>
+          <a href="#flash-sale">Flash Sale</a>
+          <a href="#products">Produk Terbaru</a>
+        </section>
+        <section class="desktop-footer-column">
+          <h3>Jual di REWEAR</h3>
+          <a href="#seller-button" data-footer-action="seller">Mulai Menjual</a>
+          <a href="#seller-button" data-footer-action="seller">Seller Center</a>
+          <a href="#seller-button" data-footer-action="seller">Tips untuk Seller</a>
+          <a href="#seller-button" data-footer-action="seller">Panduan Listing Produk</a>
+        </section>
+        <section class="desktop-footer-column">
+          <h3>Tentang REWEAR</h3>
+          <a href="#footer-about">Tentang Kami</a>
+          <a href="#footer-sustainability">Fashion Berkelanjutan</a>
+          <a href="#footer-community">Komunitas</a>
+          <a href="#footer-careers">Karier</a>
+          <div class="desktop-footer-subsection" id="footer-community">
+            <h3>Ikuti Kami</h3>
+            <div class="desktop-footer-social"><a href="#footer-community" aria-label="Instagram REWEAR">Instagram</a><a href="#footer-community" aria-label="TikTok REWEAR">TikTok</a></div>
+          </div>
+        </section>
+        <section class="desktop-footer-column">
+          <h3>Bantuan & Kontak</h3>
+          <a href="#footer-help">Pusat Bantuan</a>
+          <a href="#footer-help">Hubungi Kami</a>
+          <a href="#footer-returns">Pengembalian Barang</a>
+          <a href="#footer-payments">Pembayaran & Pesanan</a>
+          <div class="desktop-footer-subsection">
+            <h3>Informasi</h3>
+            <a href="#footer-privacy">Kebijakan Privasi</a>
+            <a href="#footer-terms">Syarat & Ketentuan</a>
+          </div>
+        </section>
+      </div>
+      <div class="container desktop-footer-bottom">
+        <span>© 2026 REWEAR. Semua hak dilindungi.</span>
+        <div><a href="#footer-privacy">Privasi</a><a href="#footer-terms">Syarat & Ketentuan</a><a href="#footer-help">Bantuan</a></div>
+        <span class="desktop-footer-region">🇮🇩 Indonesia⌄</span>
+      </div>
+    </footer>
     <nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Navigasi utama">
       <button type="button" data-bottom-action="home" class="bottom-nav-item active">
         <span class="bottom-nav-icon" aria-hidden="true">⌂</span><span>Beranda</span>
@@ -357,7 +404,26 @@
 .account-edit-actions{display:flex;gap:8px}
 .account-edit-actions button{flex:1}
 
-</style>
+
+/* Desktop marketplace footer inspired by large online marketplaces.
+   It is deliberately hidden on mobile so the existing mobile layout stays unchanged. */
+.desktop-marketplace-footer{display:none;background:#fff;border-top:1px solid #ded6d2;color:#514649;margin-top:42px;padding:42px 0 18px;font-size:13px}
+.desktop-footer-columns{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:34px;padding-bottom:36px}
+.desktop-footer-column{display:flex;flex-direction:column;align-items:flex-start;gap:12px;min-width:0}
+.desktop-footer-column h3{margin:0 0 5px;color:#251a1b;font-size:14px;font-weight:800}
+.desktop-footer-column a,.desktop-footer-bottom a,.desktop-footer-social a{color:#66595b;text-decoration:none;line-height:1.45}
+.desktop-footer-column a:hover,.desktop-footer-bottom a:hover,.desktop-footer-social a:hover{color:#4a1420;text-decoration:underline}
+.desktop-footer-subsection{display:grid;gap:11px;margin-top:16px}
+.desktop-footer-subsection h3{margin:0}
+.desktop-footer-social{display:flex;flex-wrap:wrap;gap:15px}
+.desktop-footer-bottom{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-top:17px;border-top:1px solid #eee7e3;color:#75696b;font-size:12px}
+.desktop-footer-bottom>div{display:flex;flex-wrap:wrap;gap:18px}
+.desktop-footer-region{padding:10px 13px;border:1px solid #d8cfcb;border-radius:7px;white-space:nowrap}
+@media(min-width:681px){.desktop-marketplace-footer{display:block}}
+@media(max-width:680px){.desktop-marketplace-footer{display:none!important}}
+@media(min-width:681px) and (max-width:900px){.desktop-footer-columns{gap:20px}.desktop-footer-bottom{align-items:flex-start;flex-wrap:wrap}}
+
+    </style>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script>
@@ -720,7 +786,7 @@ const setMobilePage = (page, options = {}) => {
   });
   if (options.scroll !== false) window.scrollTo({ top: 0, behavior: 'auto' });
 };
-function render() { hydrateAccount(); updateAuthHeader(); renderMobileMenu(); renderBottomNavigation(); syncFilterButtons(); products = [...baseProducts, ...sellerMarketplaceProducts()]; const list = filtered(); $('#product-count').textContent = `${list.length} produk ditemukan`; $('#products-grid').innerHTML = list.map(card).join(''); $('#flash-grid').innerHTML = products.slice(0, 4).map(card).join(''); bindCards(); }
+function render() { hydrateAccount(); updateAuthHeader(); renderMobileMenu(); renderBottomNavigation(); syncFilterButtons(); products = [...baseProducts, ...sellerMarketplaceProducts()].filter((p) => !(window.adminHidden && window.adminHidden(p))); const list = filtered(); $('#product-count').textContent = `${list.length} produk ditemukan`; $('#products-grid').innerHTML = list.map(card).join(''); $('#flash-grid').innerHTML = (window.adminFlash ? window.adminFlash(products) : products.slice(0, 4)).map(card).join(''); bindCards(); }
 function bindCards() { document.querySelectorAll('[data-product]').forEach((button) => button.onclick = () => openProduct(products.find((product) => String(product.id) === button.dataset.product))); document.querySelectorAll('[data-add]').forEach((button) => button.onclick = () => addToCart(products.find((product) => String(product.id) === button.dataset.add))); document.querySelectorAll('[data-store]').forEach((button) => button.onclick = (event) => { event.stopPropagation(); openStore(button.dataset.store); }); document.querySelectorAll('[data-favorite]').forEach((button) => button.onclick = () => requireLogin(() => { const id = button.dataset.favorite; state.favorites = state.favorites.includes(id) ? state.favorites.filter((item) => String(item) !== id) : [...state.favorites, id]; save(`rewear-favorites-${accountKey()}`, state.favorites); render(); })); }
 function renderModal() { const modal = $('#modal'); const context = toastContextForCurrentView(); if (activeToastContext && activeToastContext !== context) clearToast(); if (!state.modal) { modal.innerHTML = ''; modal.className = 'modal-backdrop hidden'; return; } modal.className = 'modal-backdrop'; if (state.modal === 'auth') modal.innerHTML = authModal(); if (state.modal === 'product') modal.innerHTML = productModal(); if (state.modal === 'store') modal.innerHTML = storeModal(); if (state.modal === 'cart') modal.innerHTML = cartModal(); if (state.modal === 'payment') modal.innerHTML = paymentModal(); if (state.modal === 'order-detail') modal.innerHTML = orderDetailModal(); if (state.modal === 'orders') modal.innerHTML = ordersModal(); if (state.modal === 'account') modal.innerHTML = accountModal(); if (state.modal === 'chat') modal.innerHTML = chatModal(); if (state.modal === 'seller-center') modal.innerHTML = sellerCenter(); bindModal(); bindAccountControls(); bindPaymentControls(); bindSellerControls(); }
 const closeModal = () => { const wasMobilePage = window.matchMedia('(max-width: 680px)').matches && (['chat','account','payment'].includes(state.modal) || document.body.classList.contains('mobile-page-payment')); state.modal = null; renderModal(); if (wasMobilePage) setMobilePage('home'); };
@@ -1144,10 +1210,208 @@ if (firebaseAuth) firebaseAuth.onAuthStateChanged(async (firebaseUser) => {
   }
 });
 if (state.user?.role === 'seller' && state.user.email) localStorage.setItem(sellerRoleKey(state.user.email), 'seller');
+
+document.querySelectorAll('[data-footer-action="seller"]').forEach((link) => link.addEventListener('click', (event) => {
+  event.preventDefault();
+  if (state.user?.role === 'seller') openSellerCenter();
+  else openAuth('seller-register');
+}));
+
 bindMobileMenu();
 bindBottomNavigation();
 setMobilePage('home', { scroll: false });
 hydrateAccount(); render();
 </script>
+  <script>
+/* ===== REWEAR ADMIN ADD-ON (added; original code untouched except small hooks) ===== */
+(() => {
+const ADMIN = { email: 'rewearofficials@gmail.com', pass: 'rewear123' };
+const K = { sus: 'rewear-admin-suspended', hid: 'rewear-admin-hidden', flash: 'rewear-admin-flash', ann: 'rewear-admin-announcement', read: 'rewear-admin-chat-read' };
+const ls = (k, f) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : f; } catch { return f; } };
+const ss = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+const E = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const rp = (n) => 'Rp' + Number(n || 0).toLocaleString('id-ID');
+const keys = (p) => Object.keys(localStorage).filter((k) => k.startsWith(p));
+const arr = (v) => Array.isArray(v) ? v : [];
+const isAdmin = () => sessionStorage.getItem('rewear-admin-session') === '1';
+const toast = (m) => { try { showToast(m); } catch { alert(m); } };
+const STAT = ['Awaiting Payment', 'New', 'Processing', 'Shipped', 'Completed', 'Cancelled'];
+const dt = (d) => { const x = new Date(d); return isNaN(x) ? '-' : x.toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }); };
+
+/* ---------- data helpers ---------- */
+const allOrders = () => keys('rewear-orders-').flatMap((k) => arr(ls(k, [])).map((o) => ({ ...o, _k: k, _e: k.slice(14) }))).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+const emails = () => { const s = new Set(); ['rewear-cart-', 'rewear-orders-', 'rewear-favorites-', 'rewear-chat-', 'rewear-seller-role-'].forEach((p) => keys(p).forEach((k) => s.add(k.slice(p.length)))); const u = ls('rewear-user', null); if (u && u.email) s.add(String(u.email).toLowerCase()); s.delete('guest'); return [...s].sort(); };
+const sellerListings = () => keys('rewear-seller-').filter((k) => k.endsWith('-products')).flatMap((k) => { const o = k.slice(14, -9); return arr(ls(k, [])).map((p) => ({ ...p, _k: k, _owner: o, _id: `seller:${o}:${p.id}` })); });
+const reviews = () => keys('rewear-seller-').filter((k) => k.endsWith('-reviews')).flatMap((k) => arr(ls(k, [])).map((r) => ({ ...r, _k: k })));
+const chats = () => keys('rewear-chat-').map((k) => { const e = k.slice(12); const r = arr(ls(k, [])).find((x) => x.room === 'helper'); const m = (r && r.messages) || []; if (!m.some((x) => x.sender === 'user')) return null; const rd = ls(K.read, {})[e] || 0; return { e, k, m, unread: m[m.length - 1].sender === 'user' && m.length > rd }; }).filter(Boolean).sort((a, b) => b.unread - a.unread);
+const hidden = () => ls(K.hid, []).map(String);
+window.adminHidden = (p) => hidden().includes(String(p.id));
+window.adminFlash = (list) => { const ids = ls(K.flash, []).map(String); const sel = ids.length ? list.filter((p) => ids.includes(String(p.id))) : []; return sel.length ? sel : list.slice(0, 4); };
+
+/* ---------- announcement ---------- */
+const applyAnn = () => { const a = ls(K.ann, null); const c = document.querySelector('.announcement .container'); if (a && c) c.innerHTML = `🌿 <b>${E(a.bold)}</b><span>${E(a.text)}</span>`; };
+
+/* ---------- panel shell ---------- */
+const css = document.createElement('style');
+css.textContent = `#admin-root{display:none;position:fixed;inset:0;z-index:10050;background:#f5f1ec;color:#251a1b;overflow:auto;font-size:14px}
+#admin-root.open{display:block}.adm-wrap{display:grid;grid-template-columns:210px 1fr;min-height:100%}
+.adm-side{background:#4a1420;color:#fff;padding:18px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px}
+.adm-side h2{margin:0 8px 14px;font-size:18px}.adm-side button{text-align:left;padding:10px 12px;border-radius:8px;background:transparent;color:#eadde0}
+.adm-side button.on{background:#fff;color:#4a1420;font-weight:700}.adm-side .sp{flex:1}
+.adm-main{padding:22px;min-width:0}.adm-main h1{margin:0 0 16px;font-size:22px;color:#4a1420}
+.adm-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+.adm-card,.adm-box{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 0 #e8dfd9}.adm-card b{display:block;font-size:22px;color:#4a1420;margin-top:4px}.adm-card span{color:#7b7070;font-size:12px}
+.adm-box{margin-bottom:16px}.adm-box h3{margin:0 0 12px;font-size:15px}
+.adm-scroll{overflow-x:auto}.adm-main table{width:100%;border-collapse:collapse;min-width:640px}.adm-main th,.adm-main td{padding:9px 8px;border-bottom:1px solid #eee7e3;text-align:left;vertical-align:top}
+.adm-main th{font-size:12px;color:#7b7070}.adm-empty{text-align:center!important;color:#7b7070;padding:24px!important}
+.adm-btn{padding:7px 12px;border-radius:7px;background:#4a1420;color:#fff;font-weight:700;font-size:12px}.adm-btn.alt{background:#e9e5e2;color:#4a1420}.adm-btn.red{background:#b3322f}
+.adm-main input,.adm-main select{padding:8px 10px;border:1px solid #ddd2cf;border-radius:7px;background:#fff;max-width:100%}
+.adm-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}.adm-tag{display:inline-block;padding:2px 8px;border-radius:99px;background:#eee7e3;font-size:11px;font-weight:700}
+.adm-tag.g{background:#dcf1e1;color:#2b6a3c}.adm-tag.r{background:#f6dcdb;color:#8f2623}.adm-tag.y{background:#fbefcf;color:#7a5a07}
+.adm-bars div{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:12px}.adm-bars i{display:block;height:10px;border-radius:5px;background:#4a1420;min-width:3px}
+.adm-chat{display:grid;grid-template-columns:260px 1fr;gap:14px}.adm-clist{display:flex;flex-direction:column;gap:6px;max-height:70vh;overflow:auto}
+.adm-clist button{text-align:left;padding:10px;border-radius:9px;background:#fff;border:1px solid #eee7e3}.adm-clist button.on{border-color:#4a1420;background:#f8eef0}
+.adm-msgs{display:flex;flex-direction:column;gap:8px;height:46vh;overflow:auto;padding:10px;background:#f7f7f7;border-radius:10px}
+.adm-m{max-width:78%;padding:9px 12px;border-radius:14px;background:#fff;border:1px solid #eee;overflow-wrap:anywhere}.adm-m.me{align-self:flex-end;background:#f5e6e3}
+.adm-rep{display:flex;gap:8px;margin-top:10px}.adm-rep input{flex:1}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#c24c63;margin-left:6px}
+.adm-thumb{width:42px;height:42px;object-fit:cover;border-radius:6px;background:#ebe6e1}.adm-pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}.adm-pick label{display:flex;gap:8px;align-items:center;padding:8px;background:#f7f4f1;border-radius:8px}
+.no-results{grid-column:1/-1;text-align:center;padding:40px 10px;color:#7b7070}
+@media(max-width:760px){.adm-wrap{grid-template-columns:1fr}.adm-side{position:static;height:auto;flex-direction:row;overflow-x:auto;padding:10px}.adm-side h2{display:none}.adm-side button{white-space:nowrap}.adm-side .sp{display:none}.adm-main{padding:14px}.adm-chat{grid-template-columns:1fr}}`;
+document.head.appendChild(css);
+const root = document.createElement('div'); root.id = 'admin-root'; document.body.appendChild(root);
+let tab = 'dash', ordF = 'All', ordQ = '', selChat = null;
+const TABS = [['dash', '📊 Dashboard'], ['orders', '📦 Pesanan'], ['chat', '💬 Chat'], ['users', '👥 Pengguna'], ['products', '🛍 Produk'], ['reviews', '⭐ Ulasan'], ['settings', '⚙ Pengaturan']];
+const tbl = (h, rows) => `<div class="adm-scroll"><table><thead><tr>${h.map((x) => `<th>${x}</th>`).join('')}</tr></thead><tbody>${rows.join('') || `<tr><td colspan="${h.length}" class="adm-empty">Belum ada data.</td></tr>`}</tbody></table></div>`;
+const stTag = (s) => `<span class="adm-tag ${s === 'Completed' ? 'g' : s === 'Cancelled' ? 'r' : 'y'}">${E(s)}</span>`;
+const itemsOf = (o) => arr(o.items).map((i) => `${E(i.product && i.product.name)}${i.quantity > 1 ? ' ×' + i.quantity : ''}`).join(', ');
+
+/* ---------- views ---------- */
+const vDash = () => {
+  const o = allOrders(), live = o.filter((x) => x.status !== 'Cancelled'), rev = live.reduce((s, x) => s + Number(x.total || 0), 0);
+  const pend = o.filter((x) => ['Awaiting Payment', 'New', 'Processing'].includes(x.status)).length;
+  const prods = baseProducts.length + sellerListings().filter((p) => p.status === 'Active').length;
+  const max = Math.max(1, ...STAT.map((s) => o.filter((x) => x.status === s).length));
+  return `<h1>Dashboard</h1><div class="adm-cards">${[['Total pesanan', o.length], ['Pendapatan', rp(rev)], ['Perlu diproses', pend], ['Pengguna', emails().length], ['Produk aktif', prods], ['Chat belum dibalas', chats().filter((c) => c.unread).length]].map(([a, b]) => `<div class="adm-card"><span>${a}</span><b>${b}</b></div>`).join('')}</div>
+  <div class="adm-box"><h3>Status pesanan</h3><div class="adm-bars">${STAT.map((s) => { const n = o.filter((x) => x.status === s).length; return `<div><span style="width:130px">${s}</span><i style="width:${n / max * 60}%"></i><b>${n}</b></div>`; }).join('')}</div></div>
+  <div class="adm-box"><h3>Pesanan terbaru</h3>${tbl(['ID', 'Pembeli', 'Total', 'Status'], o.slice(0, 5).map((x) => `<tr><td>${E(x.id)}</td><td>${E(x._e)}</td><td>${rp(x.total)}</td><td>${stTag(x.status)}</td></tr>`))}</div>`;
+};
+const vOrders = () => {
+  let o = allOrders();
+  if (ordF !== 'All') o = o.filter((x) => x.status === ordF);
+  const q = ordQ.toLowerCase(); if (q) o = o.filter((x) => `${x.id} ${x._e} ${x.recipient}`.toLowerCase().includes(q));
+  return `<h1>Pesanan</h1><div class="adm-bar"><input id="ord-q" placeholder="Cari ID / email / nama" value="${E(ordQ)}"><select id="ord-f" data-a="ordf"><option>All</option>${STAT.map((s) => `<option ${s === ordF ? 'selected' : ''}>${s}</option>`).join('')}</select></div>
+  <div class="adm-box">${tbl(['ID', 'Pembeli', 'Item', 'Total', 'Bayar', 'Tanggal', 'Status'], o.map((x) => `<tr><td><b>${E(x.id)}</b></td><td>${E(x._e)}<br><small>${E(x.recipient)} · ${E(x.phone)}<br>${E(x.address)}</small></td><td>${itemsOf(x)}</td><td>${rp(x.total)}</td><td>${E(x.paymentMethod)}<br><small>${E(x.paymentStatus)}</small></td><td>${dt(x.createdAt)}</td><td><select data-sel="${E(x.id)}">${STAT.map((s) => `<option ${s === x.status ? 'selected' : ''}>${s}</option>`).join('')}</select><br><button class="adm-btn" style="margin-top:6px" data-a="ost" data-k="${E(x._k)}" data-id="${E(x.id)}">Simpan</button></td></tr>`))}</div>`;
+};
+const vChat = () => {
+  const list = chats(); if (!selChat && list[0]) selChat = list[0].e;
+  const c = list.find((x) => x.e === selChat);
+  if (c) { const rd = ls(K.read, {}); if (rd[c.e] !== c.m.length) { rd[c.e] = c.m.length; ss(K.read, rd); } }
+  return `<h1>Chat Pelanggan</h1><div class="adm-chat"><div class="adm-clist">${list.map((x) => `<button class="${x.e === selChat ? 'on' : ''}" data-a="selchat" data-e="${E(x.e)}"><b>${E(x.e)}</b>${x.unread && x.e !== selChat ? '<span class="dot"></span>' : ''}<br><small>${E(String(x.m[x.m.length - 1].text).slice(0, 40))}</small></button>`).join('') || '<div class="adm-box">Belum ada pelanggan yang chat.</div>'}</div>
+  <div>${c ? `<div class="adm-box" style="margin:0"><h3>${E(c.e)}</h3><div class="adm-msgs">${c.m.map((m) => `<div class="adm-m ${m.sender === 'user' ? '' : 'me'}">${E(m.text)}</div>`).join('')}</div><div class="adm-rep"><input id="adm-reply" placeholder="Tulis balasan untuk pelanggan..."><button class="adm-btn" data-a="send">Kirim</button></div></div>` : ''}</div></div>`;
+};
+const vUsers = () => {
+  const sus = ls(K.sus, []), o = allOrders();
+  return `<h1>Pengguna</h1><div class="adm-box">${tbl(['Email', 'Peran', 'Pesanan', 'Total belanja', 'Status', ''], emails().map((e) => { const mine = o.filter((x) => x._e === e); const bad = sus.includes(e); return `<tr><td>${E(e)}</td><td>${localStorage.getItem('rewear-seller-role-' + e) === 'seller' ? 'Seller' : 'Buyer'}</td><td>${mine.length}</td><td>${rp(mine.reduce((s, x) => s + Number(x.total || 0), 0))}</td><td>${bad ? '<span class="adm-tag r">Disuspend</span>' : '<span class="adm-tag g">Aktif</span>'}</td><td><button class="adm-btn ${bad ? 'alt' : 'red'}" data-a="sus" data-e="${E(e)}">${bad ? 'Aktifkan' : 'Suspend'}</button></td></tr>`; }))}<p style="color:#7b7070;font-size:12px">Daftar ini berisi akun yang pernah dipakai di browser ini.</p></div>`;
+};
+const vProducts = () => {
+  const h = hidden();
+  const rows = [...baseProducts.map((p) => ({ _id: String(p.id), p, src: 'Toko REWEAR', base: true })), ...sellerListings().map((p) => ({ _id: p._id, p, src: p._owner, base: false }))];
+  return `<h1>Produk</h1><div class="adm-box">${tbl(['', 'Produk', 'Penjual', 'Harga', 'Status', ''], rows.map(({ _id, p, src, base }) => { const hid = h.includes(_id); return `<tr><td><img class="adm-thumb" src="${E(p.image)}" alt=""></td><td><b>${E(p.brand)}</b><br>${E(p.name)}</td><td>${E(src)}</td><td>${rp(p.price)}</td><td>${hid ? '<span class="adm-tag r">Disembunyikan</span>' : '<span class="adm-tag g">Tampil</span>'}</td><td><button class="adm-btn alt" data-a="hide" data-id="${E(_id)}">${hid ? 'Tampilkan' : 'Sembunyikan'}</button> ${base ? '' : `<button class="adm-btn red" data-a="del" data-k="${E(p._k)}" data-pid="${E(p.id)}">Hapus</button>`}</td></tr>`; }))}</div>`;
+};
+const vReviews = () => `<h1>Ulasan</h1><div class="adm-box">${tbl(['Pembeli', 'Produk', 'Rating', 'Ulasan', ''], reviews().map((r) => `<tr><td>${E(r.buyer)}</td><td>${E(r.product)}</td><td>${'★'.repeat(Number(r.rating) || 0)}</td><td>${E(r.text)}</td><td><button class="adm-btn red" data-a="delrev" data-k="${E(r._k)}" data-id="${E(r.id)}">Hapus</button></td></tr>`))}</div>`;
+const vSettings = () => {
+  const a = ls(K.ann, { bold: 'GRATIS ONGKIR', text: 'Belanja preloved, hemat sampai 80%!' }), fl = ls(K.flash, []).map(String);
+  const vis = [...baseProducts, ...sellerMarketplaceProducts()].filter((p) => !hidden().includes(String(p.id)));
+  return `<h1>Pengaturan Website</h1><div class="adm-box"><h3>Teks pengumuman (bar atas)</h3><div class="adm-bar"><input id="ann-b" value="${E(a.bold)}" placeholder="Teks tebal"><input id="ann-t" style="flex:1;min-width:220px" value="${E(a.text)}" placeholder="Teks"></div><button class="adm-btn" data-a="annsave">Simpan</button> <button class="adm-btn alt" data-a="annreset">Reset</button></div>
+  <div class="adm-box"><h3>Produk Flash Sale</h3><p style="color:#7b7070;margin-top:0">Pilih produk yang tampil di Flash Sale. Kosongkan semua untuk default (4 produk pertama).</p><div class="adm-pick">${vis.map((p) => `<label><input type="checkbox" data-fid="${E(p.id)}" ${fl.includes(String(p.id)) ? 'checked' : ''}> ${E(p.brand)} – ${E(p.name)}</label>`).join('')}</div><p><button class="adm-btn" data-a="flashsave">Simpan Flash Sale</button> <button class="adm-btn alt" data-a="flashreset">Reset</button></p></div>`;
+};
+const VIEW = { dash: vDash, orders: vOrders, chat: vChat, users: vUsers, products: vProducts, reviews: vReviews, settings: vSettings };
+const paint = () => {
+  const a = document.activeElement, id = a && root.contains(a) ? a.id : '', v = a && a.value, s = a && a.selectionStart;
+  root.innerHTML = `<div class="adm-wrap"><aside class="adm-side"><h2>REWEAR Admin</h2>${TABS.map(([k, l]) => `<button class="${k === tab ? 'on' : ''}" data-a="tab" data-t="${k}">${l}</button>`).join('')}<div class="sp"></div><button data-a="logout">⎋ Keluar</button></aside><main class="adm-main">${VIEW[tab]()}</main></div>`;
+  if (id) { const n = root.querySelector('#' + id); if (n) { if (v !== undefined && n.tagName !== 'SELECT') n.value = v; n.focus(); try { n.setSelectionRange(s, s); } catch {} } }
+  const m = root.querySelector('.adm-msgs'); if (m) m.scrollTop = m.scrollHeight;
+};
+const openAdmin = () => { root.classList.add('open'); document.body.style.overflow = 'hidden'; paint(); };
+const closeAdmin = () => { root.classList.remove('open'); document.body.style.overflow = ''; };
+
+/* ---------- actions ---------- */
+const setStatus = (key, id, st) => {
+  const l = arr(ls(key, [])), o = l.find((x) => x.id === id); if (!o) return;
+  o.status = st; o.orderStatus = st;
+  if (['Processing', 'Shipped', 'Completed'].includes(st) && o.paymentStatus === 'Menunggu pembayaran') o.paymentStatus = 'Sudah dibayar';
+  ss(key, l);
+  const buyer = key.slice(14);
+  keys('rewear-seller-').filter((k) => k.endsWith('-orders')).forEach((k) => { const sl = arr(ls(k, [])); let ch = false; sl.forEach((so) => { if (so.buyerOrderId === id && String(so.buyerKey).toLowerCase() === buyer) { so.status = st; ch = true; } }); if (ch) ss(k, sl); });
+};
+root.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-a]'); if (!b || b.tagName === 'SELECT') return;
+  const a = b.dataset.a, d = b.dataset;
+  if (a === 'tab') { tab = d.t; }
+  else if (a === 'logout') { sessionStorage.removeItem('rewear-admin-session'); closeAdmin(); history.replaceState(null, '', location.pathname + location.search); render(); toast('Admin berhasil keluar.'); return; }
+  else if (a === 'ost') { const s = root.querySelector(`[data-sel="${CSS.escape(d.id)}"]`); setStatus(d.k, d.id, s.value); toast('Status pesanan diperbarui.'); }
+  else if (a === 'selchat') { selChat = d.e; }
+  else if (a === 'send') { const i = root.querySelector('#adm-reply'), t = i.value.trim(); if (!t) return; const k = 'rewear-chat-' + selChat; const rooms = arr(ls(k, [])); let r = rooms.find((x) => x.room === 'helper'); if (!r) { r = { room: 'helper', name: 'Rewear Helper', messages: [] }; rooms.push(r); } r.messages.push({ sender: 'other', text: t, createdAt: Date.now() }); ss(k, rooms); i.value = ''; toast('Balasan terkirim.'); }
+  else if (a === 'sus') { let s = ls(K.sus, []); s = s.includes(d.e) ? s.filter((x) => x !== d.e) : [...s, d.e]; ss(K.sus, s); }
+  else if (a === 'hide') { let h = hidden(); h = h.includes(d.id) ? h.filter((x) => x !== d.id) : [...h, d.id]; ss(K.hid, h); render(); }
+  else if (a === 'del') { if (!confirm('Hapus produk ini secara permanen?')) return; ss(d.k, arr(ls(d.k, [])).filter((p) => String(p.id) !== d.pid)); render(); }
+  else if (a === 'delrev') { if (!confirm('Hapus ulasan ini?')) return; ss(d.k, arr(ls(d.k, [])).filter((r) => String(r.id) !== d.id)); }
+  else if (a === 'annsave') { ss(K.ann, { bold: root.querySelector('#ann-b').value.trim(), text: root.querySelector('#ann-t').value.trim() }); applyAnn(); toast('Pengumuman diperbarui.'); }
+  else if (a === 'annreset') { localStorage.removeItem(K.ann); const c = document.querySelector('.announcement .container'); if (c) c.innerHTML = '🌿 <b>GRATIS ONGKIR</b><span>Belanja preloved, hemat sampai 80%!</span>'; }
+  else if (a === 'flashsave') { ss(K.flash, [...root.querySelectorAll('[data-fid]:checked')].map((x) => x.dataset.fid)); render(); toast('Flash Sale diperbarui.'); }
+  else if (a === 'flashreset') { localStorage.removeItem(K.flash); render(); toast('Flash Sale dikembalikan ke default.'); }
+  paint();
+});
+root.addEventListener('input', (e) => { if (e.target.id === 'ord-q') { ordQ = e.target.value; paint(); } });
+root.addEventListener('change', (e) => { if (e.target.id === 'ord-f') { ordF = e.target.value; paint(); } });
+root.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.id === 'adm-reply') { e.preventDefault(); root.querySelector('[data-a="send"]').click(); } });
+
+/* ---------- login intercept (admin + suspended accounts) ---------- */
+document.addEventListener('submit', (e) => {
+  const f = e.target; if (!f || f.id !== 'auth-form') return;
+  const fd = new FormData(f), em = String(fd.get('email') || '').trim().toLowerCase(), pw = String(fd.get('password') || '');
+  if (em === ADMIN.email) {
+    e.preventDefault(); e.stopPropagation();
+    if (pw === ADMIN.pass) { sessionStorage.setItem('rewear-admin-session', '1'); closeModal(); render(); openAdmin(); } else toast('Email atau password admin salah.');
+    return;
+  }
+  if (ls(K.sus, []).includes(em)) { e.preventDefault(); e.stopPropagation(); toast('Akun ini disuspend oleh admin.'); }
+}, true);
+
+/* ---------- hooks into existing render ---------- */
+const _render = render;
+render = function () {
+  const u = state.user;
+  if (u && ls(K.sus, []).includes(String(u.email || '').toLowerCase())) { localStorage.removeItem('rewear-user'); state.user = null; try { firebaseAuth && firebaseAuth.signOut(); } catch {} setTimeout(() => toast('Akun kamu disuspend oleh admin.'), 60); }
+  _render.apply(this, arguments);
+  const g = document.querySelector('#products-grid');
+  if (g && !g.children.length) g.innerHTML = `<p class="no-results">😕 Produk ${state.search ? '"' + E(state.search) + '" ' : ''}tidak ditemukan. Coba kata kunci atau filter lain.</p>`;
+};
+
+/* ---------- live sync between tabs ---------- */
+window.addEventListener('storage', (e) => {
+  if (!e.key) return;
+  if (e.key.startsWith('rewear-chat-') && state.user && e.key === 'rewear-chat-' + accountKey()) { hydrateAccount(); if (state.modal === 'chat') renderModal(); }
+  if (root.classList.contains('open') && ['dash', 'orders', 'chat', 'users'].includes(tab)) paint();
+});
+
+/* ---------- search fix ---------- */
+const si = document.querySelector('#search'), sb = document.querySelector('#search-button');
+const doSearch = () => { state.search = si.value; render(); setMobilePage('products'); document.getElementById('products').scrollIntoView({ behavior: 'smooth' }); };
+sb.onclick = doSearch;
+si.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); doSearch(); } });
+
+/* Google login can't work when the page is opened as a plain file (file://) */
+document.addEventListener('click', (e) => { const g = e.target.closest && e.target.closest('[data-google]'); if (g && location.protocol === 'file:') { e.preventDefault(); e.stopPropagation(); toast('Login Google tidak bisa dari file langsung. Jalankan lewat Live Server (http://localhost).'); } }, true);
+
+applyAnn();
+render();
+if (isAdmin()) openAdmin();
+/* shortcut: open Rewear.html#admin to reach the admin login even if a customer is logged in */
+const hashCheck = () => { if (location.hash === '#admin') { if (isAdmin()) openAdmin(); else { try { openAuth('login'); } catch {} } } };
+window.addEventListener('hashchange', hashCheck); hashCheck();
+})();
+</script>
+
   </body>
 </html>
