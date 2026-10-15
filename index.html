@@ -452,7 +452,7 @@ const firebaseAuthErrorMessage = (error) => ({
 }[error?.code] || error?.message || 'Authentication failed. Please try again.');
 const hasFirebaseAdminClaim = async (user) => {
   try {
-    const token = await user.getIdTokenResult();
+    const token = await user.getIdTokenResult(true);
     return token.claims.admin === true;
   } catch (error) {
     console.error('Could not verify Firebase admin claim:', error);
