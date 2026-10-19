@@ -3,7 +3,7 @@
   <head>
 <script>if (location.hostname === '127.0.0.1') location.replace(location.href.replace('127.0.0.1', 'localhost')); /* Firebase Google login only allows localhost */</script>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>REWEAR Preloved Fashion Marketplace</title>
   </head>
   <body>
@@ -462,14 +462,9 @@ const hasFirebaseAdminClaim = async (user) => {
 
 const signInWithGoogle = async () => {
   if (!firebaseApp || !firebaseAuth) {
-    showToast('Firebase belum dikonfigurasi. Masukkan project Firebase yang valid untuk Google login.');
+    showToast('Firebase Authentication is not configured.');
     return;
-  }
-
-  if (firebaseConfig.apiKey.includes('YOUR_') || firebaseConfig.projectId.includes('YOUR_')) {
-    showToast('Google login belum aktif karena Firebase config masih placeholder. Ganti nilai config dengan project asli Anda.');
-    return;
-  }
+  } 
 
   try {
     const provider = new firebase.auth.GoogleAuthProvider();
@@ -478,22 +473,44 @@ const signInWithGoogle = async () => {
 
     const result = await firebaseAuth.signInWithPopup(provider);
     const user = result.user;
+
+    // Check the trusted Firebase admin claim
     const isAdmin = await hasFirebaseAdminClaim(user);
 
-    setUser({
+    const userData = {
       name: user.displayName || user.email?.split('@')[0] || 'Google User',
       email: user.email || user.uid,
       role: isAdmin ? 'admin' : 'buyer',
       authProvider: 'google',
       photoURL: user.photoURL || ''
-    });
+    };
 
-    showToast('Berhasil masuk dengan Google');
+    setUser(userData);
+
+    if (isAdmin) {
+      // Use the same session flag as the existing admin panel
+      sessionStorage.setItem('rewear-admin-session', '1');
+
+      closeModal();
+      render();
+      openAdmin();
+
+      showToast('Successfully logged in as Admin');
+      return;
+    }
+
+    // Regular Google users remain buyers
+    sessionStorage.removeItem('rewear-admin-session');
+    showToast('Successfully logged in with Google');
+
   } catch (error) {
     console.error('Google login failed:', error);
-    const message = error?.code === 'auth/popup-closed-by-user'
-      ? 'Login Google dibatalkan.'
-      : (error?.message || 'Login Google gagal.');
+
+    const message =
+      error?.code === 'auth/popup-closed-by-user'
+        ? 'Google login was cancelled.'
+        : (error?.message || 'Google login failed.');
+
     showToast(message);
   }
 };
@@ -1253,10 +1270,11 @@ const applyAnn = () => { const a = ls(K.ann, null); const c = document.querySele
 
 /* ---------- panel shell ---------- */
 const css = document.createElement('style');
-css.textContent = `#admin-root{display:none;position:fixed;inset:0;z-index:10050;background:#f5f1ec;color:#251a1b;overflow:auto;font-size:14px}
-#admin-root.open{display:block}.adm-wrap{display:grid;grid-template-columns:210px 1fr;min-height:100%}
-.adm-side{background:#4a1420;color:#fff;padding:18px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px}
-.adm-side h2{margin:0 8px 14px;font-size:18px}.adm-side button{text-align:left;padding:10px 12px;border-radius:8px;background:transparent;color:#eadde0}
+css.textContent = `#admin-root{display:none;position:fixed;inset:0;z-index:10050;background:#f5f1ec;color:#251a1b;overflow:auto;font-size:14px;box-sizing:border-box}
+#admin-root *,#admin-root *::before,#admin-root *::after{box-sizing:border-box}
+#admin-root.open{display:block}.adm-wrap{display:grid;grid-template-columns:210px minmax(0,1fr);min-height:100%;min-width:0}
+.adm-side{background:#4a1420;color:#fff;padding:18px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px;min-width:0}
+.adm-side h2{margin:0 8px 14px;font-size:18px}.adm-side button{display:flex;align-items:center;justify-content:flex-start;gap:8px;min-height:42px;flex:0 0 auto;text-align:left;line-height:1.25;padding:10px 12px;border:0;border-radius:8px;background:transparent;color:#eadde0;white-space:nowrap;cursor:pointer}
 .adm-side button.on{background:#fff;color:#4a1420;font-weight:700}.adm-side .sp{flex:1}
 .adm-main{padding:22px;min-width:0}.adm-main h1{margin:0 0 16px;font-size:22px;color:#4a1420}
 .adm-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
@@ -1276,7 +1294,25 @@ css.textContent = `#admin-root{display:none;position:fixed;inset:0;z-index:10050
 .adm-rep{display:flex;gap:8px;margin-top:10px}.adm-rep input{flex:1}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#c24c63;margin-left:6px}
 .adm-thumb{width:42px;height:42px;object-fit:cover;border-radius:6px;background:#ebe6e1}.adm-pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}.adm-pick label{display:flex;gap:8px;align-items:center;padding:8px;background:#f7f4f1;border-radius:8px}
 .no-results{grid-column:1/-1;text-align:center;padding:40px 10px;color:#7b7070}
-@media(max-width:760px){.adm-wrap{grid-template-columns:1fr}.adm-side{position:static;height:auto;flex-direction:row;overflow-x:auto;padding:10px}.adm-side h2{display:none}.adm-side button{white-space:nowrap}.adm-side .sp{display:none}.adm-main{padding:14px}.adm-chat{grid-template-columns:1fr}}`;
+/* Responsive admin navigation: keep all seven tabs the same size and prevent the sidebar becoming a tall column */
+@media(max-width:900px){
+  #admin-root.open .adm-wrap{display:flex;flex-direction:column;min-width:0}
+  #admin-root.open .adm-side{position:sticky;top:0;z-index:5;display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:6px;width:100%;height:auto;min-height:0;max-height:none;flex:0 0 auto;
+    padding:28px 10px 10px;padding-top:calc(28px + env(safe-area-inset-top, 0px));overflow-x:auto;overflow-y:hidden;
+    overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  #admin-root.open .adm-side::-webkit-scrollbar{display:none}
+  #admin-root.open .adm-side h2{display:none}
+  #admin-root.open .adm-side button{display:inline-flex;align-items:center;justify-content:center;flex:0 0 108px;width:108px;min-width:108px;max-width:108px;height:48px;min-height:48px;max-height:48px;margin:0;padding:0 8px;text-align:center;line-height:1.2;white-space:nowrap;border:1px solid transparent;border-radius:9px;}
+  #admin-root.open .adm-side button.on{background:#fff;color:#4a1420;border-color:#fff;font-weight:700;box-shadow:none}
+  #admin-root.open .adm-side .sp{display:none;flex:0 0 0}
+  #admin-root.open .adm-side button[data-a="logout"]{margin-left:0;border-color:rgba(255,255,255,.25)}
+  #admin-root.open .adm-main{padding:14px;min-width:0;width:100%}
+  #admin-root.open .adm-chat{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:380px){#admin-root.open .adm-side{gap:5px;padding-left:8px;padding-right:8px}#admin-root.open .adm-side button{flex-basis:104px;width:104px;min-width:104px;max-width:104px;padding:0 6px;font-size:13px}}
+@supports(padding-top:env(safe-area-inset-top)){
+  @media(max-width:900px){#admin-root.open .adm-side{padding-top:calc(28px + env(safe-area-inset-top, 0px))}}
+}`;
 document.head.appendChild(css);
 const root = document.createElement('div'); root.id = 'admin-root'; document.body.appendChild(root);
 let tab = 'dash', ordF = 'All', ordQ = '', selChat = null;
