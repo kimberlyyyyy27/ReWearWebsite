@@ -441,6 +441,77 @@
 @media(max-width:680px){.desktop-marketplace-footer{display:none!important}}
 @media(min-width:681px) and (max-width:900px){.desktop-footer-columns{gap:20px}.desktop-footer-bottom{align-items:flex-start;flex-wrap:wrap}}
 
+/* UI polish: clearer focus, more consistent cards, and safer mobile sizing */
+:where(button,a,input,select,textarea):focus-visible{outline:3px solid #69b8d0;outline-offset:2px}
+button:disabled{opacity:.55;cursor:not-allowed}
+.category-list,.condition-list{padding:2px 1px 5px;scrollbar-width:thin;scrollbar-color:#d5c5c2 transparent;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+.category-pill,.condition-pill{min-height:42px;flex:0 0 auto}
+.category-pill:hover,.condition-pill:hover{transform:translateY(-1px);box-shadow:0 3px 10px #4a14201a}
+.product-card,.flash-grid .product-card,.store-product-grid .product-card{min-width:0;transition:transform .18s ease,box-shadow .18s ease}
+.product-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px #4a14201a}
+.product-image{overflow:hidden;aspect-ratio:4/5;height:auto;min-height:0}
+.product-image img{display:block;transition:transform .25s ease}
+.product-card:hover .product-image img{transform:scale(1.025)}
+.product-info h3{overflow-wrap:anywhere;line-height:1.4}
+.price-row{flex-wrap:wrap}
+.seller-center-modal{max-width:1100px;width:min(1100px,100%);border:1px solid #e8dfd9}
+.seller-topbar{position:sticky;top:0;z-index:3}
+.seller-main{scrollbar-width:thin;scrollbar-color:#d5c5c2 transparent}
+.seller-section{min-width:0}
+.seller-primary,.seller-small-btn,.seller-order-controls button,.seller-message button{min-height:38px;transition:background .15s ease,color .15s ease,transform .15s ease}
+.seller-primary:hover{background:#642532;transform:translateY(-1px)}
+.seller-form{min-width:0}
+.seller-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.seller-form label{min-width:0;line-height:1.45}
+.seller-form input,.seller-form select,.seller-form textarea{min-height:42px;min-width:0;color:#251a1b}
+.seller-form textarea{min-height:96px;line-height:1.5}
+.seller-form input:focus,.seller-form select:focus,.seller-form textarea:focus{border-color:#4a1420;box-shadow:0 0 0 3px #4a142014;outline:none}
+.seller-actions{flex-wrap:wrap}
+.seller-note{font-size:11px}
+.seller-product-mini b{overflow-wrap:anywhere;line-height:1.35}
+@media(max-width:900px){.container{width:min(100% - 28px,1180px)}.product-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.flash-grid,.store-product-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){
+  .container{width:calc(100% - 22px)}
+  .page-content{padding-bottom:calc(82px + env(safe-area-inset-bottom,0px))}
+  .panel{padding:13px;border-radius:11px}
+  .hero{height:auto;min-height:220px;padding:25px 20px;background-position:center}
+  .hero h1{font-size:clamp(28px,8vw,40px);line-height:1.08}
+  .product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .flash-grid,.store-product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .product-image{aspect-ratio:4/5}
+  .product-info{padding:9px}
+  .product-info h3{font-size:12px;min-height:0}
+  .price-row b{font-size:12px}
+  .quick-add{width:calc(100% - 16px);margin:4px 8px 8px;min-height:36px}
+  .seller-center-modal{width:100%;max-height:100dvh;max-height:100vh;border-radius:0}
+  .seller-center{min-height:100dvh}
+  .seller-topbar{padding:calc(12px + env(safe-area-inset-top,0px)) 13px 12px}
+  .seller-layout{min-height:0}
+  .seller-sidebar{padding:10px 8px}
+  .seller-nav{gap:6px;padding-bottom:3px;scrollbar-width:none;overscroll-behavior-x:contain}
+  .seller-nav::-webkit-scrollbar{display:none}
+  .seller-nav button{min-height:42px;padding:10px 12px}
+  .seller-main{padding:13px;overflow:visible}
+  .seller-page-title{gap:10px;margin-bottom:14px}
+  .seller-page-title h2{font-size:20px}
+  .seller-page-title p{line-height:1.5}
+  .seller-page-title>.seller-primary{width:100%}
+  .seller-stats{gap:8px}
+  .seller-stat,.seller-section{padding:12px}
+  .seller-stat strong{font-size:18px}
+  .seller-form-grid{grid-template-columns:minmax(0,1fr);gap:11px}
+  .seller-form{gap:11px}
+  .seller-form input,.seller-form select,.seller-form textarea{font-size:16px;min-height:44px}
+  .seller-actions{display:grid;grid-template-columns:1fr;gap:8px}
+  .seller-actions button{min-height:42px;width:100%}
+  .seller-order-info{grid-template-columns:minmax(0,1fr)}
+  .seller-order-controls{flex-wrap:wrap}
+  .seller-order-controls select{flex:1 1 150px;min-height:40px}
+  .seller-order-controls button{min-height:40px}
+  .seller-message-head,.seller-order-head{flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
     </style>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -1156,7 +1227,7 @@ const bindSellerControls = () => {
       return;
     }
 
-    if (!name || name.length > 100 || !size || size.length > 30 || !description || description.length > 1000 || !['Branded', 'Unbranded'].includes(brandType) || (brandType === 'Branded' && (!brandName || brandName.length > 60)) || !['Atasan', 'Dress', 'Outer', 'Bawahan', 'Tas'].includes(category) || !['Like New', 'Very Good', 'Good', 'Fair'].includes(condition) || !Number.isSafeInteger(price) || price <= 0 || !Number.isSafeInteger(stock) || stock < 0 || !['http:', 'https:'].includes(imageUrl.protocol)) {
+    if (!name || name.length > 100 || !size || size.length > 30 || !description || description.length > 1000 || !['Branded', 'Unbranded'].includes(brandType) || (brandType === 'Branded' && (!brandName || brandName.length > 60)) || !['Atasan', 'Dress', 'Outer', 'Bawahan', 'Tas', 'Sepatu', 'Aksesoris'].includes(category) || !['Like New', 'Very Good', 'Good', 'Fair'].includes(condition) || !Number.isSafeInteger(price) || price <= 0 || !Number.isSafeInteger(stock) || stock < 0 || !['http:', 'https:'].includes(imageUrl.protocol)) {
       showToast('Periksa nama, deskripsi, kategori, kondisi, harga, stok, dan URL gambar produk.');
       return;
     }
